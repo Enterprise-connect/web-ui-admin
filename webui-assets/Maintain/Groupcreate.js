@@ -284,7 +284,7 @@ export default class Groupcreate extends React.Component {
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <div className="col-sm-12 label required">
-                                            SUBSCRIPTION <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            License <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                         </div>
                                         <div className="col-sm-12 mb-2">
                                             <select 
@@ -305,7 +305,7 @@ export default class Groupcreate extends React.Component {
                                     </div>
                                     <div className="col-sm-6">
                                         <div className="col-sm-12 label required">
-                                            GROUP ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Group ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                         </div>
                                         <div className="col-sm-12 mb-2">
                                             <input

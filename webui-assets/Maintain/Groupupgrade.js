@@ -89,16 +89,12 @@ export default class Groupupgrade extends React.Component {
 
     /* istanbul ignore next */
     generateTableStructure(tableData){
-      /*  tableData=[{
-            "groupId":"12345",
-            "ids":{
-                "aid":"avbf43",
-                "tid":"avbf43"}  
-                }];*/
+     
         let newTableData = [];
         for(let dataObj of tableData){
             let newDataObj = {};
             newDataObj.groupId = dataObj.groupId;
+            newDataObj.key = dataObj.key;
             newTableData.push(newDataObj);
         }
 
@@ -244,7 +240,7 @@ export default class Groupupgrade extends React.Component {
         if (cnf) {
             let groupId = tbodyVal.groupId;
             this.props.showGlobalMessage(true, true, 'Please Wait....', 'custom-success');
-            fetch(this.props.baseUrl + '/deleteGroup?groupID='+groupId+'&subscriptionID='+this.state.selectedSubscriptionId , {
+            fetch( this.props.baseUrl + tbodyVal.key ,{   //this.props.baseUrl + '/deleteGroup?groupID='+groupId+'&subscriptionID='+this.state.selectedSubscriptionId , {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -255,20 +251,12 @@ export default class Groupupgrade extends React.Component {
             .then((response) => {
                 if (response.status === 200) {
                     response.json().then((respData) => {
-                        if (respData.errorStatus.status === 'ok') {
                             this.props.showGlobalMessage(false, true, 'Record deleted successfuly', 'custom-success');
                             window.removeDataTableRow('groupupgradeTable', rowIndex);
                             let that = this;
                             setTimeout(function () {
                                 that.props.hideGlobalMessage();
                             }, 2000);
-                        }
-                        else{
-                            this.props.showGlobalMessage(true, true, respData.errorStatus.statusMsg, 'custom-danger');
-                            setTimeout(()=> {
-                                this.props.hideGlobalMessage();
-                            }, 2000);
-                        }
                     });
                 }
                 else {
@@ -296,21 +284,7 @@ export default class Groupupgrade extends React.Component {
             <div className="row Groupupgrade">
                 <div className="col-md-12">
                     <div className="row mt-2">
-                      {/*   <div className="col-sm-6">
-                            <select 
-                                className="form-control form-control-sm" 
-                                name="subscriptionId" 
-                                value={this.state.selectedSubscriptionId}
-                                onChange={(event)=>{this.getDataOnChange(event)}}>
-                                    {
-                                    this.state.subscriptions.map((subscription, subscriptionIndex) => {
-                                        return(
-                                            <option
-                                                key={"subscriptionOption"+subscriptionIndex}
-                                                value={ subscription.subscriptionId }>{ subscription.subscriptionName }</option>)
-                                    })}
-                            </select>
-                        </div> */}
+                    
                         <div className="col-sm-6 text-left">
                             <div className="d-inline">
                                 <button type="button" className="btn btn-sm btn-outline-secondary disabled">

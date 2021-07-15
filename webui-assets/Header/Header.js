@@ -22,7 +22,7 @@ export default class Header extends React.Component {
     render() {
         /* jshint ignore:start */
         return (
-            <header>
+            <header className={ this.props.user !== "OpsAdmin" ? "admin-header" : "user-header" }>
                 <div className="col-md-12">
                     <div className="row">
                         <div className="col-lg-6 ge-logo">

@@ -1,4 +1,5 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export default class WebHooks extends React.Component {
   /* istanbul ignore next */
@@ -14,7 +15,55 @@ export default class WebHooks extends React.Component {
       errorsForm: {},
       formIsValid: false,
       showForm: false,
+      WebHookList:[{
+        name: '',
+        eventType: '',
+        endpoint: '',
+    }]
     };
+  }
+
+/* istanbul ignore next */
+  componentDidMount(){
+    window.initTable('webhookTable', true);
+    this.fetchData();
+  }
+
+  /* istanbul ignore next */
+  fetchData(){
+    let webhooks = [];
+    if (sessionStorage.getItem("snapshotData") !== null) {
+            let respData =  JSON.parse(sessionStorage.getItem("snapshotData"))
+            let allData =[]
+              Object.keys(respData).forEach((key)=> {
+                  allData.push(respData[key])
+              });
+              for(let individualData of allData){
+                  if(individualData.parent){
+                      if(individualData.parent ==="5e69f043-966d-438f-9421-83fb18272a7d"){
+                        webhooks.push(individualData);
+                      }
+                  }
+              }
+            this.setState({
+                WebHookList: webhooks
+            });
+       
+    }
+    else {
+        this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+        this.setState({
+            WebHookList: [{
+                name: '',
+                eventType: '',
+                endpoint: '',
+            }]
+        });
+        setTimeout(()=> {
+            this.props.hideGlobalMessage();
+        }, 2000);
+    }
+
   }
 
   /* istanbul ignore next */
@@ -85,7 +134,7 @@ export default class WebHooks extends React.Component {
   }
   
   /* istanbul ignore next */
-  createNotification() {
+/*   createNotification() {
     this.props.showGlobalMessage(
       false,
       true,
@@ -102,7 +151,7 @@ export default class WebHooks extends React.Component {
     this.setState({
       showForm: false,
     });
-  }
+  } */
 
   /* istanbul ignore next */
   showHideField(e, fieldName) {
@@ -119,6 +168,169 @@ export default class WebHooks extends React.Component {
       formData: currentForm,
     });
   }
+
+    /* istanbul ignore next */
+  createWebHook(){
+    this.props.showGlobalMessage(
+        true,
+        true,
+        "Please wait...",
+        "custom-success"
+      );
+      let currentForm = Object.assign({}, this.state.formData);
+      let prepareData = {};
+      let myuuid = uuidv4();
+      prepareData.webhookname = currentForm.name.value;
+      prepareData.eventType = currentForm.eventType.value;
+      prepareData.endpoint = currentForm.endpoint.value;
+      prepareData.secret = btoa(unescape(encodeURIComponent( currentForm.secret.value )));
+  
+      prepareData.parent = "5e69f043-966d-438f-9421-83fb18272a7d"
+      prepareData.name = "webHook"
+  
+      // fetch(this.props.baseUrl + '/createSubscription', {
+      fetch(`${this.props.baseUrl}webhook-${myuuid}` , {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.props.authToken,
+        },
+        body: JSON.stringify(prepareData),
+      })
+        .then((response) => {
+          localStorage.setItem("prepareData", JSON.stringify(prepareData));
+  
+          if (response.status === 200) {
+            this.snapshotUpdate();
+            response.json().then((respData) => {
+              respData = {
+                errorStatus: {
+                  status: "ok",
+                },
+              };
+              if (respData.errorStatus.status == "ok") {
+                this.props.showGlobalMessage(
+                  false,
+                  true,
+                  "Record saved successfully",
+                  "custom-success"
+                );
+                setTimeout(() => {
+                  this.props.hideGlobalMessage();
+                  let formData = {
+                    name: { value: "", dirtyState: false },
+                    eventType: { value: "", dirtyState: false },
+                    endpoint: { value: "", dirtyState: false },
+                    secret: { value: "", dirtyState: false, type: "password" },
+                  };
+                  this.setState({
+                    formData: formData,
+                    formIsValid: false
+                  });
+                }, 2000);
+              } else {
+                this.props.showGlobalMessage(
+                  true,
+                  true,
+                  respData.errorStatus.statusMsg,
+                  "custom-danger"
+                );
+                setTimeout(() => {
+                  this.props.hideGlobalMessage();
+                }, 2000);
+              }
+            });
+          } else {
+            this.props.showGlobalMessage(
+              true,
+              true,
+              "Please try after sometime",
+              "custom-danger"
+            );
+            setTimeout(() => {
+              this.props.hideGlobalMessage();
+            }, 2000);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.props.showGlobalMessage(
+            true,
+            true,
+            "Please try after sometime",
+            "custom-danger"
+          );
+          setTimeout(() => {
+            this.props.hideGlobalMessage();
+          }, 2000);
+        });
+  }
+
+   /* istanbul ignore next */ 
+   snapshotUpdate(){
+    fetch(this.props.baseUrl + "snapshot", {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.props.authToken,
+        }
+      })
+    .then((response) => {
+        if (response.status === 200) {
+          response.json().then((respData) => {
+            sessionStorage.setItem("snapshotData", JSON.stringify(respData));
+            this.fetchData();
+    })
+    }})
+    }
+    
+     /* istanbul ignore next */ 
+    deleteWebhook(tbodyVal,rowIndex){
+        let cnf = window.confirm('Are you sure you want to delete');
+        if (cnf) {
+            this.props.showGlobalMessage(true, true, 'Please Wait....', 'custom-success');
+            fetch(this.props.baseUrl + tbodyVal.key, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+this.props.authToken
+                }
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((respData) => {
+                     /*    if (respData.errorStatus.status === 'ok') { */
+                            this.props.showGlobalMessage(false, true, 'Record deleted successfuly', 'custom-success');
+                            window.removeDataTableRow('webhookTable', rowIndex);
+                            let that = this;
+                            setTimeout(function () {
+                                that.props.hideGlobalMessage();
+                            }, 2000);
+                           that.snapshotUpdate();
+                    
+                    });
+                }
+                else {
+                    this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                    let that = this;
+                    setTimeout(function () {
+                        that.props.hideGlobalMessage();
+                    }, 2000);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                setTimeout(()=> {
+                    this.props.hideGlobalMessage();
+                }, 2000);
+            });
+        }
+
+    }
 
   render() {
     /* jshint ignore:start */
@@ -181,10 +393,10 @@ export default class WebHooks extends React.Component {
                             }}
                           >
                             <option value="">Choose a event </option>
-                            <option value="client">Client Agent Restart </option>
-                            <option value="server">Server Agent Restart</option>
-                            <option value="gateway">Gateway Agent Restart</option>
-                            <option value="connection">
+                            <option value="Client Agent Restart">Client Agent Restart </option>
+                            <option value="Server Agent Restart">Server Agent Restart</option>
+                            <option value="Gateway Agent Restart">Gateway Agent Restart</option>
+                            <option value="Connection Establish">
                                Connection Establish
                             </option>
                           </select>
@@ -262,15 +474,25 @@ export default class WebHooks extends React.Component {
                       </div>
                     </div>
 
+                    <br/>
                     <div className="row">
-                      <div className="col-sm-12 mb-2 text-center">
+                        <div className="col-sm-4" ></div>
+                        <div  className="col-sm-2 mb-2 text-right">
                         <button
                           id="create-group-btn"
                           disabled={!this.state.formIsValid}
-                          onClick={this.createNotification.bind(this)}
+                          onClick={this.createWebHook.bind(this)}
                           className="btn btn-sm customize-view-btn"
                         >
                           CREATE WEBHOOKS
+                        </button> </div>
+                        <div className="col-sm-2 mb-2 text-left">
+                        <button
+                          id="create-group-btn"
+                          onClick={()=>this.setState({showForm:false})}
+                          className="btn btn-sm customize-view-btn"
+                        >
+                          BACK
                         </button>
                       </div>
                     </div>
@@ -301,8 +523,53 @@ export default class WebHooks extends React.Component {
                   </div>
                   <hr />
                   <div className="row">
-                    <div className="col-sm-12 text-center">
-                      List of WebHooks
+                    <div className="col-sm-12 text-center" id="webhookTableDiv">
+                    <table className="table ">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Event Type</th>
+                            <th>Target Endpoint</th>
+                             <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.WebHookList.map((hooks, indx) => {
+                            return (
+                              <tr key={"user" + indx}>
+                                <td>{hooks.webhookname} </td>
+                                <td>{hooks.eventType} </td>
+                                <td> {hooks.endpoint}</td>
+                                <td>
+                                  <span className="action-img">
+                                    <img
+                                      alt="plus-icon"
+                                      title=""
+                                      src="assets/static/images/plus.svg"
+                                    />
+                                    <img
+                                      alt="edit-icon"
+                                      title="Edit"
+                                      src="assets/static/images/iconedit_tablemaintainmonitor.svg"
+                                    />
+                                    <img
+                                      alt="-icon"
+                                      title=""
+                                      src="assets/static/images/icon_tablemaintainmonitor.svg"
+                                    />
+                                    <img
+                                      onClick={()=>this.deleteWebhook(hooks,indx)}
+                                      alt="delete-icon"
+                                      title="Delete"
+                                      src="assets/static/images/icondelete_tablemaintainmonitor.svg"
+                                    />
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>

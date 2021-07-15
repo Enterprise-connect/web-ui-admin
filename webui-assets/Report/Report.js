@@ -1,6 +1,6 @@
 import React from "react";
 
-export default class Report extends React.Component {
+ class Report extends React.Component {
 
     /* istanbul ignore next */
     constructor(props) {
@@ -16,3 +16,5 @@ export default class Report extends React.Component {
         /* jshint ignore:end */
     }
 }
+
+export default Report;

@@ -1,147 +1,5 @@
 import React from "react";
 
-/*const MOCK_TABLE_DATA = [
-    {
-        agent_id: 'DEV63016760',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename1',
-        group: '1',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016761',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename11',
-        group: '2',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016762',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '3',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016763',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '4',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016764',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '1',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016765',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '2',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016766',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '3',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016767',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '4',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016768',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '1',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016769',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '2',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016770',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '3',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016771',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '4',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016772',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '1',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    },
-    {
-        agent_id: 'DEV63016773',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        group: '2',
-        oauth_provider: 'https://avipocsubdomain.domainname.ext/pagename',
-        zone: 'https://avipocsubdomain.domainname.ext/pagename',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_host: 'https://avipocsubdomain.domainname.ext/pagename',
-        remote_port: 'https://avipocsubdomain.domainname.ext/pagename'
-    }
-];*/
 
 export default class Maintainagentview extends React.Component {
 
@@ -157,7 +15,7 @@ export default class Maintainagentview extends React.Component {
     /* istanbul ignore next */
     componentDidMount(){
         let technicalTableData = [];
-        fetch(this.props.baseUrl+'/listGateways?user_id='+this.props.userId, { // Get gateways
+        fetch("https://reqres.in/api/users/2", {  //this.props.baseUrl+'/listGateways?user_id='+this.props.userId, { // Get gateways
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -168,7 +26,7 @@ export default class Maintainagentview extends React.Component {
         .then((response) => {
             if (response.status === 200) {
                 response.json().then((respData) => {
-                    /*let gateways = [
+                    let gateways = [
                         {
                           "gatewayId": "Gateway-10afc420-d8ad-41ec-8be6-6f723e6fb18a",
                           "userId": "212712078",
@@ -187,9 +45,9 @@ export default class Maintainagentview extends React.Component {
                           "admToken": "YWRtaW46WUo1NVBpWUkwWXpZcmpFQjVsc0dNNGdOcVRTSDlwS1l5RFJXcldOTElwSjA0TlBJM1M=",
                           "hostUrl": "wss://gateway-url/agent"
                         }
-                    ];*/
+                    ];
 
-                    let gateways = respData.data;
+                   // let gateways = respData.data;
                     if(gateways === null){
                         gateways = [];
                     }
@@ -209,7 +67,7 @@ export default class Maintainagentview extends React.Component {
                         }
                     }
                     
-                    fetch(this.props.baseUrl + '/listServers?user_id='+this.props.userId, { // Get servers
+                    fetch("https://reqres.in/api/users/2", {  //this.props.baseUrl + '/listServers?user_id='+this.props.userId, { // Get servers
                         method: 'GET',
                         headers: {
                             'Accept': 'application/json',
@@ -220,7 +78,7 @@ export default class Maintainagentview extends React.Component {
                     .then((response) => {
                         if (response.status === 200) {
                             response.json().then((respData) => {
-                                /*let servers = [
+                                let servers = [
                                     {
                                       "serverId": "Server-56ca9bb6-62ee-4a41-88bd-107d20ceed30",
                                       "gatewayId": "Gateway-16450058-e7e3-4ac2-9315-5fa93afaf709",
@@ -255,8 +113,8 @@ export default class Maintainagentview extends React.Component {
                                       "remotePort": "5432",
                                       "plugin": null
                                     }
-                                ];*/
-                                let servers = respData.data;
+                                ];
+                               // let servers = respData.data;
                                 if(servers === null){
                                     servers = [];
                                 }
@@ -276,7 +134,7 @@ export default class Maintainagentview extends React.Component {
                                     }
                                 }
 
-                                fetch(this.props.baseUrl + '/listClients?user_id='+this.props.userId, { // Get clients
+                                fetch( "https://reqres.in/api/users/2", { //this.props.baseUrl + '/listClients?user_id='+this.props.userId, { // Get clients
                                     method: 'GET',
                                     headers: {
                                         'Accept': 'application/json',
@@ -287,7 +145,7 @@ export default class Maintainagentview extends React.Component {
                                 .then((response) => {
                                     if (response.status === 200) {
                                         response.json().then((respData) => {
-                                            /*let clients = [
+                                            let clients = [
                                                 {
                                                   "clientId": "Client-1b95c319-aa6c-44ba-8c2f-2b1764efe697",
                                                   "gatewayId": "Gateway-16450058-e7e3-4ac2-9315-5fa93afaf709",
@@ -318,8 +176,8 @@ export default class Maintainagentview extends React.Component {
                                                   "localPort": "7999",
                                                   "plugin": null
                                                 }
-                                            ];*/
-                                            let clients = respData.data;
+                                            ];
+                                           // let clients = respData.data;
                                             if(clients === null){
                                                 clients = [];
                                             }

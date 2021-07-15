@@ -1,4 +1,5 @@
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export default class Subscriptioncreate extends React.Component {
   constructor(props) {
@@ -31,29 +32,12 @@ export default class Subscriptioncreate extends React.Component {
         { name: "True", id: "true" },
         { name: "False", id: "false" },
       ],
-      keyName:""
     };
   }
 
   /* istanbul ignore next */
   componentDidMount() {
-   	window.enableToolTip();
-	let respData =  JSON.parse(sessionStorage.getItem("snapshotData"))
-        let allData =[]
-        let subsData=[]
-          Object.keys(respData).forEach((key)=> {
-              allData.push(respData[key])
-          });
-          for(let individualData of allData){
-              if(individualData.parent){
-                  if(individualData.parent ==="ab2a2691-a563-486c-9883-5111ff36ba9b"){
-                  subsData.push(individualData)
-                  }
-              }
-          }
-         this.setState({
-              keyName:"subscription[" + subsData.length + "]"
-          })  
+   	window.enableToolTip(); 
   }
 	
   /* istanbul ignore next */
@@ -62,11 +46,8 @@ export default class Subscriptioncreate extends React.Component {
     let updatedValue =
       e.target.type === "checkbox" ? e.target.checked : e.target.value;
     let currentForm = Object.assign({}, this.state.subscriptionForm);
-
-    if (fieldName === "licenseId") {
-      currentForm.licenseId.value = updatedValue;
-      currentForm.licenseId.dirtyState = true;
-    } else if (fieldName === "emailAddress") {
+	 
+     if (fieldName === "emailAddress") {
       currentForm.emailAddress.value = updatedValue;
       currentForm.emailAddress.dirtyState = true;
     } else if (fieldName === "sso") {
@@ -91,8 +72,7 @@ export default class Subscriptioncreate extends React.Component {
 
   /* istanbul ignore next */
   handleFormValidation() {
-    let currentFormData = this.state.subscriptionForm;
-   
+    let currentFormData = this.state.subscriptionForm;   
 
     let licenseId = currentFormData.licenseId.value;
     let licenseIdDirtyState = currentFormData.licenseId.dirtyState;
@@ -104,13 +84,6 @@ export default class Subscriptioncreate extends React.Component {
     let usernameDirtyState = currentFormData.username.dirtyState;
     let formIsValid = true;
     let errors = {};
-
-    if (licenseId.trim() === "") {
-      if (licenseIdDirtyState) {
-        errors.licenseId = "Please enter License Id";
-      }
-      formIsValid = false;
-    }
 
     if (username.trim() === "") {
       if (usernameDirtyState) {
@@ -150,9 +123,9 @@ export default class Subscriptioncreate extends React.Component {
     );
     let currentForm = Object.assign({}, this.state.subscriptionForm);
     let prepareData = {};
-
+    let myuuid = uuidv4();
    
-    prepareData.licenseId = currentForm.licenseId.value;
+    prepareData.licenseId = myuuid;
     prepareData.emailAddress = currentForm.emailAddress.value;
     prepareData.date = currentForm.date.value;
     prepareData.sso = currentForm.sso.value;
@@ -162,7 +135,7 @@ export default class Subscriptioncreate extends React.Component {
     prepareData.name = "License"
 
     // fetch(this.props.baseUrl + '/createSubscription', {
-    fetch(this.props.baseUrl + this.state.keyName, {
+    fetch(this.props.baseUrl + myuuid, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -199,7 +172,6 @@ export default class Subscriptioncreate extends React.Component {
                   username: { value: "", dirtyState: false },
                   date:{ value: "", dirtyState: false }
                 };
-		this.handleCountSubscriptions();
                 this.setState({
                   subscriptionForm: subscriptionForm,
                   subscriptionFormIsValid: false,
@@ -305,7 +277,7 @@ export default class Subscriptioncreate extends React.Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <div className="col-sm-12 label required">
-                      LICENSE ID
+                      License ID
                       <img
                         alt="down-arrow"
                         src="assets/static/images/icon_greensortingdown.svg"
@@ -326,10 +298,11 @@ export default class Subscriptioncreate extends React.Component {
                         type="text"
                         className="form-control form-control-sm"
                         name="licenseId"
+			readOnly={true}
                         value={this.state.subscriptionForm.licenseId.value}
-                        onChange={(event) => {
+                      /*  onChange={(event) => {
                           this.handleFormData(event);
-                        }}
+                        }}*/
                       />
                       <small className="text-danger">
                         {this.state.errorsSubscriptionForm["licenseId"]}
@@ -338,7 +311,7 @@ export default class Subscriptioncreate extends React.Component {
                   </div>
                   <div className="col-sm-6">
                     <div className="col-sm-12 label required">
-                      EXPIRY DATE/TIME
+                      Expiry Date/Time
                       <span className="float-right help-text">
                         <img
                           alt="info"
@@ -372,7 +345,7 @@ export default class Subscriptioncreate extends React.Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <div className="col-sm-12 label required">
-                      EMAIL ADDRESS
+                      Email Address
                       <img
                         alt="down-arrow"
                         src="assets/static/images/icon_greensortingdown.svg"
@@ -443,7 +416,7 @@ export default class Subscriptioncreate extends React.Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <div className="col-sm-12 label required">
-                     USER FULLNAME
+                     User Fullname
                       <img
                         alt="down-arrow"
                         src="assets/static/images/icon_greensortingdown.svg"
@@ -477,7 +450,7 @@ export default class Subscriptioncreate extends React.Component {
 
                   <div className="col-sm-6">
                     <div className="col-sm-12 label">
-                      DESCRIPTION
+                      Description
                       <img
                         alt="down-arrow"
                         src="assets/static/images/icon_greensortingdown.svg"
@@ -516,7 +489,7 @@ export default class Subscriptioncreate extends React.Component {
                              id="create-subscription-btn"
                              disabled={!this.state.subscriptionFormIsValid}
                              onClick={this.createSubscription.bind(this)} 
-                             className="btn btn-sm customize-view-btn">CREATE SUBSCRIPTION</button>
+                             className="btn btn-sm customize-view-btn">CREATE LICENSE</button>
                     </div>
                 </div>
 

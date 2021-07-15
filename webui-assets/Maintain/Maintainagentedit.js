@@ -6,7 +6,7 @@ export default class Maintainagentedit extends React.Component {
         super(props);
         this.state = {
             agentForm: {
-                agentMode: { value: 1, dirtyState: false },
+                agentMode: { value: 2, dirtyState: false },
                 gateway: { value: '', dirtyState: false },
                 businessId: { value: 0, dirtyState: false },
                 businessName: { value: '', dirtyState: false },
@@ -1250,7 +1250,7 @@ export default class Maintainagentedit extends React.Component {
                             <hr></hr>
                             <div className="row form-body">
                                 <div className="col-sm-4">
-                                    <h6>AGENT MODE</h6>
+                                    <h6>Agent Mode</h6>
                                     <div className="col-sm-12 mb-2">
                                         {this.state.agentModeButtons.map((agentModeButton, buttonIndex) => {
                                             return (
@@ -1445,13 +1445,12 @@ export default class Maintainagentedit extends React.Component {
                                 </div>
                                 : null
                             }
-
                             {this.state.agentForm.agentMode.value == 2 ?
                                 <div className="changeable-form server-form">
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                MODE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1464,7 +1463,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                AGENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Agent ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1478,7 +1477,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                GROUP <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1492,7 +1491,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1509,7 +1508,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT SECRET <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Client Secret <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1523,7 +1522,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                DURATION <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Duration <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1552,7 +1551,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1569,7 +1568,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                ZONE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Zone <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1583,7 +1582,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                SERVICE URL <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Service URL <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1597,7 +1596,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                REMOTE HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Remote Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1611,7 +1610,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                REMOTE PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Remote Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1629,7 +1628,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                PROXY
+                                            Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1642,7 +1641,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                ALLOW PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Allow Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <div className="custom-control custom-checkbox">
@@ -1661,7 +1660,7 @@ export default class Maintainagentedit extends React.Component {
                                             this.state.serverForm.allowPlugIn.value ?
                                                 <div className="col-sm-3">
                                                     <div className="col-sm-12 label">
-                                                        PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                    Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                                     </div>
                                                     <div className="col-sm-12 mb-2">
                                                         <select multiple className="form-control form-control-sm" style={{ height: '45px' }} name="plugIn" value={this.state.serverForm.plugIn.value} onChange={(event) => { this.handleServerFormData(event) }}>
@@ -1706,7 +1705,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                MODE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1719,7 +1718,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                AGENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Agent ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1733,7 +1732,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                GROUP <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1747,7 +1746,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1764,7 +1763,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT SECRET <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Client Secret <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1778,7 +1777,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                DURATION <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Duration <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1807,7 +1806,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1824,7 +1823,7 @@ export default class Maintainagentedit extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                LOCAL PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Local Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1839,7 +1838,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                TARGET ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Target ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1853,7 +1852,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                PROXY
+                                            Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1867,7 +1866,7 @@ export default class Maintainagentedit extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                ALLOW PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Allow Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <div className="custom-control custom-checkbox">
@@ -1889,7 +1888,7 @@ export default class Maintainagentedit extends React.Component {
                                             this.state.clientForm.allowPlugIn.value ?
                                                 <div className="col-sm-3">
                                                     <div className="col-sm-12 label">
-                                                        PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                    Plug-in<img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                                     </div>
                                                     <div className="col-sm-12 mb-2">
                                                         <select multiple className="form-control form-control-sm" style={{ height: '45px' }} name="plugIn" value={this.state.clientForm.plugIn.value} onChange={(event) => { this.handleClientFormData(event) }}>

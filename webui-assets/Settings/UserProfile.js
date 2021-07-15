@@ -61,12 +61,12 @@ export default class UserProfile extends React.Component {
       if (response.status === 200) {
         response.json().then((profile) => {
           profile = {
-            firstName: "Aarav",
-            lastName: "Patel",
-            geId: "aarav.patel@ge.com",
-            mobile: "07525493650",
-            city: "Pune",
-            country: "India",
+            firstName: "Bryan",
+            lastName: "Shaw",
+            geId: "bryan.shaw@ge.com",
+            mobile: "+113120312",
+            city: "Nevada",
+            country: "US",
           };
           let currentbasicProfile = Object.assign({}, this.state.basicProfile);
           let currentCopyBasicProfile = Object.assign(

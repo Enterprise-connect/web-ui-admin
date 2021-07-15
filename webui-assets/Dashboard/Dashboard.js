@@ -16,7 +16,7 @@ export default class Dashboard extends React.Component {
         type: "pie",
       },
       title: {
-        text: "Browser market shares in January, 2018",
+        text: "Types of usage by different Agents",
       },
       tooltip: {
         pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>",
@@ -42,38 +42,34 @@ export default class Dashboard extends React.Component {
           colorByPoint: true,
           data: [
             {
-              name: "Chrome",
+              name: "Postgres",
               y: 61.41,
               sliced: true,
               selected: true,
             },
             {
-              name: "Internet Explorer",
+              name: "SSH",
               y: 11.84,
             },
             {
-              name: "Firefox",
+              name: "Database",
               y: 10.85,
             },
             {
-              name: "Edge",
+              name: "MySQL",
               y: 4.67,
             },
             {
-              name: "Safari",
+              name: "Oracle",
               y: 4.18,
             },
             {
-              name: "Sogou Explorer",
+              name: "Redis",
               y: 1.64,
             },
             {
-              name: "Opera",
-              y: 1.6,
-            },
-            {
               name: "QQ",
-              y: 1.2,
+              y: 2.8,
             },
             {
               name: "Other",
@@ -86,22 +82,22 @@ export default class Dashboard extends React.Component {
 
     Highcharts.chart("lineChart", {
       title: {
-        text: "Solar Employment Growth by Sector, 2010-2016",
+        text: "Connectivity over time, 2016-2021",
       },
-
+      /* 
       subtitle: {
         text: "Source: thesolarfoundation.com",
-      },
+      }, */
 
       yAxis: {
         title: {
-          text: "Number of Employees",
+          text: "Number of Users",
         },
       },
 
       xAxis: {
         accessibility: {
-          rangeDescription: "Range: 2010 to 2017",
+          rangeDescription: "Range: 2016 to 2021",
         },
       },
 
@@ -116,30 +112,30 @@ export default class Dashboard extends React.Component {
           label: {
             connectorAllowed: false,
           },
-          pointStart: 2010,
+          pointStart: 2016,
         },
       },
 
       series: [
         {
           name: "Installation",
-          data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175],
+          data: [43934, 52503, 57177, 69658, 97031, 119931],
         },
         {
           name: "Manufacturing",
-          data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434],
+          data: [24916, 24064, 29742, 29851, 32490, 30282],
         },
         {
           name: "Sales & Distribution",
-          data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387],
+          data: [11744, 17722, 16005, 19771, 20185, 24377],
         },
         {
           name: "Project Development",
-          data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227],
+          data: [null, null, 7988, 12169, 15112, 22452],
         },
         {
           name: "Other",
-          data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111],
+          data: [12908, 5948, 8105, 11248, 8989, 11816],
         },
       ],
 
@@ -167,18 +163,24 @@ export default class Dashboard extends React.Component {
       },
 
       title: {
-        text: "Total fruit consumption, grouped by gender",
+        text: "Connectivity usage between  different Gateways",
       },
 
       xAxis: {
-        categories: ["Apples", "Oranges", "Pears", "Grapes", "Bananas"],
+        categories: [
+          "Gateway",
+          "Agents",
+          "Server",
+          "SuperConnections",
+          "Sessions",
+        ],
       },
 
       yAxis: {
         allowDecimals: false,
         min: 0,
         title: {
-          text: "Number of fruits",
+          text: "Number of Gateways",
         },
       },
 

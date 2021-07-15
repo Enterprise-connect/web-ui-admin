@@ -24,7 +24,7 @@ export default class Maintainagentupgrade extends React.Component {
     /* istanbul ignore next */
     handleDataTable(preserveState) {
         let technicalTableData = [];
-        fetch(this.props.baseUrl + '/listGateways?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
+        fetch(  "https://reqres.in/api/users/2",{  //this.props.baseUrl + '/listGateways?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -72,7 +72,7 @@ export default class Maintainagentupgrade extends React.Component {
                             }
                         }
 
-                        fetch(this.props.baseUrl + '/listServers?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
+                        fetch(  "https://reqres.in/api/users/2",{   //this.props.baseUrl + '/listServers?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
                             method: 'GET',
                             headers: {
                                 'Accept': 'application/json',
@@ -118,7 +118,7 @@ export default class Maintainagentupgrade extends React.Component {
                                             }
                                         }
 
-                                        fetch(this.props.baseUrl + '/listClients?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
+                                        fetch(  "https://reqres.in/api/users/2",{ //this.props.baseUrl + '/listClients?user_id=' + this.props.userId, { // Get gateways this.props.baseUrl+'/listGateways?user_id='+this.props.userId
                                             method: 'GET',
                                             headers: {
                                                 'Accept': 'application/json',
@@ -129,7 +129,57 @@ export default class Maintainagentupgrade extends React.Component {
                                             .then((response) => {
                                                 if (response.status === 200) {
                                                     response.json().then((respData) => {
-                                                        let clients = respData.data;
+                                                        let clients = [
+                                                          {
+                                                            agent_id: "OicLas512",
+                                                            serverId: "",
+                                                            clientId: "PiLsac12a",
+                                                            userId: "Qasorse",
+                                                            gatewayId: "gateway-312312a21",
+                                                            targetId: "targetId",
+                                                            uaaClientId: "uaaClientId",
+                                                            uaaClientSecret: "uaaClientSecret",
+                                                            duration: "duration",
+                                                            gateway: "hostUrl",
+                                                            hostUrl: "wss://gateway-uri/agent",
+                                                            localPort: "localPort",
+                                                            group: "groupId",
+                                                            oauth_provider: "uaaUrl",
+                                                            zone: "licenseid",
+                                                            subscription: "clientId",
+                                                            remote_port: "8080",
+                                                            remote_host: "wss://gateway-uri/agent",
+                                                            agentMode: "3",
+                                                            environment: "AWS",
+                                                            gatewayPort: "CF",
+                                                            serviceUrl: "",
+                                                            admToken: "adwqiwqeqwkasdqw",
+                                                          }, {
+                                                            agent_id: "FicLas51qw",
+                                                            serverId: "",
+                                                            clientId: "LsiLsac12a",
+                                                            userId: "Qasorse",
+                                                            gatewayId: "gateway-312312a21",
+                                                            targetId: "targetId2",
+                                                            uaaClientId: "uaaClientId2",
+                                                            uaaClientSecret: "uaaClientSecret2",
+                                                            duration: "duration",
+                                                            gateway: "hostUrl",
+                                                            hostUrl: "wss://gateway-uri/agent2",
+                                                            localPort: "localPort2",
+                                                            group: "groupId2",
+                                                            oauth_provider: "uaaUrl2",
+                                                            zone: "licenseid",
+                                                            subscription: "clientId",
+                                                            remote_port: "8080",
+                                                            remote_host: "wss://gateway-uri/agent2",
+                                                            agentMode: "3",
+                                                            environment: "AWS",
+                                                            gatewayPort: "CF",
+                                                            serviceUrl: "",
+                                                            admToken: "adwqiwqeqwkasdqw",
+                                                          },
+                                                        ];
                                                         if (clients === null) {
                                                             clients = [];
                                                         }
@@ -149,16 +199,16 @@ export default class Maintainagentupgrade extends React.Component {
                                                             prepareData.hostUrl = client.hostUrl;
                                                             prepareData.localPort = client.localPort;
                                                             prepareData.group = client.groupId;
-                                                            prepareData.oauth_provider = client.uaaUrl;
-                                                            prepareData.zone = '';
-                                                            prepareData.subscription = client.clientId;
-                                                            prepareData.remote_port = '';
-                                                            prepareData.remote_host = '';
+                                                            prepareData.oauth_provider = client.oauth_provider;
+                                                            prepareData.zone = client.zone;
+                                                            prepareData.subscription = client.subscription;
+                                                            prepareData.remote_port = client.remote_port;
+                                                            prepareData.remote_host = client.remote_host;
                                                             prepareData.agentMode = '3';
-                                                            prepareData.environment = '';
-                                                            prepareData.gatewayPort = '';
-                                                            prepareData.serviceUrl = '';
-                                                            prepareData.admToken = '';
+                                                            prepareData.environment = client.environment;
+                                                            prepareData.gatewayPort = client.gatewayPort;
+                                                            prepareData.serviceUrl = client.serviceUrl;
+                                                            prepareData.admToken = ''
                                                             technicalTableData.push(prepareData);
                                                         }
                                                         this.generateTableStructure(technicalTableData, preserveState);

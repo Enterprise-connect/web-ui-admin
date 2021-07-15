@@ -63,15 +63,41 @@ export default class Maintainagentcreate extends React.Component {
             },
             errorsClientForm: {},
             clientFormIsValid: false,
+            xclientForm: {
+                mode: 'X:CLIENT',
+                group: { value: '', dirtyState: false },
+                clientId: { value: '', dirtyState: false },
+                OAuth2: { value: '', dirtyState: false },
+                host: { value: '', dirtyState: false },
+                remoteHost: { value: '', dirtyState: false },
+            },
+            errorsXClientForm: {},
+            xclientFormIsValid: false,
+
+            xserverForm: {
+                mode: 'X:CLIENT',
+                group: { value: '', dirtyState: false },
+                clientId: { value: '', dirtyState: false },
+                OAuth2: { value: '', dirtyState: false },
+                host: { value: '', dirtyState: false },
+                remoteHost: { value: '', dirtyState: false },
+            },
+            errorsXServerForm: {},
+            xserverFormIsValid: false,
             subscriptions:[],
             // API will provide this agentModeButtons
             agentModeButtons: [
                 { text: 'SERVER', value: 2 },
-                { text: 'CLIENT', value: 3 }
+                { text: 'CLIENT', value: 3 },
+                { text: 'X:SERVER', value: 4 },
+                { text: 'X:CLIENT', value: 5 },
             ],
             /* istanbul ignore next */
             // API will provide this gateways
-            gateways: [],
+            gateways: [
+              {name:"gateway-03123012" , id:101},
+              {name:"gateway-31034216" , id:102},
+              {name:"gateway-03130357" , id:103}],
             // API will provide this businesses
             businesses: [
                 { name: 'Aviation', id: '1' },
@@ -109,7 +135,8 @@ export default class Maintainagentcreate extends React.Component {
                 { name: 'Windows', id: 'windows' },
                 { name: 'Darwin', id: 'darwin' }
             ],
-            isTesting: false
+            isTesting: false,
+	    keyName:""
         };
     }
 
@@ -137,43 +164,50 @@ export default class Maintainagentcreate extends React.Component {
             });
         }
 
-        // Subscription list start
-        fetch(this.props.baseUrl + '/listSubscriptions', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+this.props.authToken
-            }
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                response.json().then((respData) => {
-                    if(respData.errorStatus.status == 'ok'){
-                        let agentForm = this.state.agentForm;
-                        let subscriptions = respData.data;
-                        let selectedSubscriptionId = '';
-                        if(subscriptions === null){
-                            subscriptions = [];
-                        }
-                        else{
-                            selectedSubscriptionId = subscriptions[1].subscriptionId;
-                            agentForm.subscriptionId.value = selectedSubscriptionId;
-                        }
 
-                        this.setState({
-                            subscriptions: subscriptions,
-                            agentForm: agentForm
-                        });
-                        this.changeFormAutofill(selectedSubscriptionId);
+
+        // Subscription list start
+
+        this.props.showGlobalMessage(true, true, 'Please wait...', 'custom-success');
+        if (sessionStorage.getItem("snapshotData") !== null) {
+          let respData =  JSON.parse(sessionStorage.getItem("snapshotData"))
+          let allData =[]
+          let subscriptionData=[]
+          let groupData =[]
+            Object.keys(respData).forEach((key)=> {
+                allData.push(respData[key])
+            });
+            for(let individualData of allData){
+                if(individualData.parent){
+                    if(individualData.parent ==="ab2a2691-a563-486c-9883-5111ff36ba9b"){
+                      subscriptionData.push(individualData);
                     }
-                });
+	        if(individualData.parent ==="f894e5a8-0f9b-46ca-8b74-57e94610d731"){
+                      groupData.push(individualData);
+                    }
+                }
             }
-        });
+            this.setState({keyName: "[" + groupData.length + "]"})
+            if(subscriptionData.length < 0){
+              subscriptionData = [];
+             }
+             this.setState({
+              subscriptions: subscriptionData,
+	            groups:groupData     
+          });
+          this.props.hideGlobalMessage();
+          }
+          else {
+              this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+              setTimeout(()=> {
+                  this.props.hideGlobalMessage();
+              }, 2000);
+          }
+
         // Subscription list end
     
         // get EC Version list start
-        fetch(this.props.baseUrl+'/ecVersions', { // this.props.baseUrl+'ecVersions'
+/*         fetch(this.props.baseUrl+'/ecVersions', { // this.props.baseUrl+'ecVersions'
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -202,7 +236,7 @@ export default class Maintainagentcreate extends React.Component {
                     }
                 });
             }
-        });
+        }); */
     }
 
     /* istanbul ignore next */
@@ -356,7 +390,7 @@ export default class Maintainagentcreate extends React.Component {
         if(fieldName === 'subscriptionId'){
             currentAgentForm.subscriptionId.value = updatedValue;
             currentAgentForm.subscriptionId.dirtyState = true;
-            this.changeFormAutofill(updatedValue);
+          //  this.changeFormAutofill(updatedValue);
         }
         else if(fieldName === 'ecVersion'){
             currentAgentForm.ecVersion.value = updatedValue;
@@ -456,7 +490,7 @@ export default class Maintainagentcreate extends React.Component {
         else if(fieldName === 'group'){
             currentServerForm.group.value = updatedValue;
             currentServerForm.group.dirtyState = true;
-            this.changeAidForServer(updatedValue);
+          //  this.changeAidForServer(updatedValue);
         }
         else if(fieldName === 'clientId'){
             currentServerForm.clientId.value = updatedValue;
@@ -540,13 +574,207 @@ export default class Maintainagentcreate extends React.Component {
             currentServerForm.os.value = updatedValue;
             currentServerForm.os.dirtyState = true;
         }
-
+	   
         this.setState({
             serverForm: currentServerForm
         });
 
         this.handleServerFormValidation();
     }
+
+       /* istanbul ignore next */
+       handleXServerFormData(e){
+        let fieldName = e.target.name;
+        let updatedValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        let currentServerForm =  Object.assign({}, this.state.xserverForm);
+
+         if(fieldName === 'group'){
+            currentServerForm.group.value = updatedValue;
+            currentServerForm.group.dirtyState = true;
+          //  this.changeAidForServer(updatedValue);
+        }
+        else if(fieldName === 'clientId'){
+            currentServerForm.clientId.value = updatedValue;
+            currentServerForm.clientId.dirtyState = true;
+        }
+       
+        else if(fieldName === 'OAuth2'){
+            currentServerForm.OAuth2.value = updatedValue;
+            currentServerForm.OAuth2.dirtyState = true;
+        }
+        else if(fieldName === 'host'){
+            currentServerForm.host.value = updatedValue;
+            currentServerForm.host.dirtyState = true;
+        }
+       
+        else if(fieldName === 'remoteHost'){
+            currentServerForm.remoteHost.value = updatedValue;
+            currentServerForm.remoteHost.dirtyState = true;
+        }
+	   
+        this.setState({
+            xserverForm: currentServerForm
+        });
+
+        this.handleXServerFormValidation();
+    }
+
+
+    /* istanbul ignore next */
+    handleXServerFormValidation(){ 
+        let currentFormData = this.state.xserverForm;
+     
+        let groupValue = currentFormData.group.value;
+        let groupDirtyState = currentFormData.group.dirtyState;
+        let clientIdValue = currentFormData.clientId.value;
+        let clientIdDirtyState = currentFormData.clientId.dirtyState;
+        let OAuth2Value = currentFormData.OAuth2.value;
+        let OAuth2DirtyState = currentFormData.OAuth2.dirtyState;
+        let hostValue = currentFormData.host.value;
+        let hostDirtyState = currentFormData.host.dirtyState;
+        let remoteHostValue = currentFormData.remoteHost.value;
+        let remoteHostDirtyState = currentFormData.remoteHost.dirtyState;
+        let formIsValid = true;
+        let errors = {};
+        let urlRegExp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+
+        if(groupValue.trim() === ''){
+            if(groupDirtyState){
+                errors.group = 'Please enter Group';
+            }
+            formIsValid = false;
+        }
+
+        if(clientIdValue.trim() === ''){
+            if(clientIdDirtyState){
+                errors.clientId = 'Please enter Client Id';
+            }
+            formIsValid = false;
+        }
+
+        
+        if(remoteHostValue.trim() === ''){
+            if(remoteHostDirtyState){
+                errors.remoteHost = 'Please enter Remote Host';
+            }
+            formIsValid = false;
+        }
+        if(OAuth2Value.trim() === ''){
+            if(OAuth2DirtyState){
+                errors.OAuth2 = 'Please enter OAuth2';
+            }
+            formIsValid = false;
+        }
+        else if(!urlRegExp.test(OAuth2Value)){
+            if(OAuth2DirtyState){
+                errors.OAuth2 = 'Please enter valid URL';
+            }
+            formIsValid = false;
+        }
+
+        this.setState({
+            xserverFormIsValid: formIsValid,
+            errorsXServerForm: errors
+        });
+    }
+
+       /* istanbul ignore next */
+       handleXClientFormData(e){
+        let fieldName = e.target.name;
+        let updatedValue = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        let currentServerForm =  Object.assign({}, this.state.xclientForm);
+
+         if(fieldName === 'group'){
+            currentServerForm.group.value = updatedValue;
+            currentServerForm.group.dirtyState = true;
+          //  this.changeAidForServer(updatedValue);
+        }
+        else if(fieldName === 'clientId'){
+            currentServerForm.clientId.value = updatedValue;
+            currentServerForm.clientId.dirtyState = true;
+        }
+       
+        else if(fieldName === 'OAuth2'){
+            currentServerForm.OAuth2.value = updatedValue;
+            currentServerForm.OAuth2.dirtyState = true;
+        }
+        else if(fieldName === 'host'){
+            currentServerForm.host.value = updatedValue;
+            currentServerForm.host.dirtyState = true;
+        }
+       
+        else if(fieldName === 'remoteHost'){
+            currentServerForm.remoteHost.value = updatedValue;
+            currentServerForm.remoteHost.dirtyState = true;
+        }
+	   
+        this.setState({
+            xclientForm: currentServerForm
+        });
+
+        this.handleXClientFormValidation();
+    }
+
+
+    /* istanbul ignore next */
+    handleXClientFormValidation(){ 
+        let currentFormData = this.state.xclientForm;
+     
+        let groupValue = currentFormData.group.value;
+        let groupDirtyState = currentFormData.group.dirtyState;
+        let clientIdValue = currentFormData.clientId.value;
+        let clientIdDirtyState = currentFormData.clientId.dirtyState;
+        let OAuth2Value = currentFormData.OAuth2.value;
+        let OAuth2DirtyState = currentFormData.OAuth2.dirtyState;
+        let hostValue = currentFormData.host.value;
+        let hostDirtyState = currentFormData.host.dirtyState;
+        let remoteHostValue = currentFormData.remoteHost.value;
+        let remoteHostDirtyState = currentFormData.remoteHost.dirtyState;
+        let formIsValid = true;
+        let errors = {};
+        let urlRegExp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+
+        if(groupValue.trim() === ''){
+            if(groupDirtyState){
+                errors.group = 'Please enter Group';
+            }
+            formIsValid = false;
+        }
+
+        if(clientIdValue.trim() === ''){
+            if(clientIdDirtyState){
+                errors.clientId = 'Please enter Client Id';
+            }
+            formIsValid = false;
+        }
+
+        
+        if(remoteHostValue.trim() === ''){
+            if(remoteHostDirtyState){
+                errors.remoteHost = 'Please enter Remote Host';
+            }
+            formIsValid = false;
+        }
+        if(OAuth2Value.trim() === ''){
+            if(OAuth2DirtyState){
+                errors.OAuth2 = 'Please enter OAuth2';
+            }
+            formIsValid = false;
+        }
+        else if(!urlRegExp.test(OAuth2Value)){
+            if(OAuth2DirtyState){
+                errors.OAuth2 = 'Please enter valid URL';
+            }
+            formIsValid = false;
+        }
+
+        this.setState({
+            xclientFormIsValid: formIsValid,
+            errorsXClientForm: errors
+        });
+    }
+
+
 
     /* istanbul ignore next */
     handleServerFormValidation(){
@@ -643,7 +871,7 @@ export default class Maintainagentcreate extends React.Component {
             formIsValid = false;
         }
 
-        if(hostValue.trim() === ''){
+    /*    if(hostValue.trim() === ''){
             if(hostDirtyState){
                 errors.host = 'Please enter Host';
             }
@@ -660,7 +888,7 @@ export default class Maintainagentcreate extends React.Component {
                 errors.host = 'Host ends with /agent';
             }
             formIsValid = false;
-        }
+        }*/
 
         if(zoneValue.trim() === ''){
             if(zoneDirtyState){
@@ -752,7 +980,7 @@ export default class Maintainagentcreate extends React.Component {
         else if(fieldName === 'group'){
             currentClientForm.group.value = updatedValue;
             currentClientForm.group.dirtyState = true;
-            this.changeAidTidForClient(updatedValue);
+          //  this.changeAidTidForClient(updatedValue);
         }
         else if(fieldName === 'clientId'){
             currentClientForm.clientId.value = updatedValue;
@@ -926,7 +1154,7 @@ export default class Maintainagentcreate extends React.Component {
             formIsValid = false;
         }
 
-        if(hostValue.trim() === ''){
+      /*  if(hostValue.trim() === ''){
             if(hostDirtyState){
                 errors.host = 'Please enter Host';
             }
@@ -943,7 +1171,7 @@ export default class Maintainagentcreate extends React.Component {
                 errors.host = 'Host ends with /agent';
             }
             formIsValid = false;
-        }
+        }*/
 
         if(localPortValue.trim() === ''){
             if(localPortDirtyState){
@@ -1055,6 +1283,48 @@ export default class Maintainagentcreate extends React.Component {
         this.handleClientFormValidation();
     }
 
+      /* istanbul ignore next */
+      copyFromXServerToXClient(){
+        let currentServerForm =  Object.assign({}, this.state.xserverForm);
+        let currentClientForm =  Object.assign({}, this.state.xclientForm);
+
+        currentClientForm.group.value = currentServerForm.group.value;
+        currentClientForm.clientId.value = currentServerForm.clientId.value;
+        currentClientForm.OAuth2.value = currentServerForm.OAuth2.value;
+        currentClientForm.host.value = currentServerForm.host.value;
+
+        this.setState({
+            xclientForm: currentClientForm
+        });
+
+        this.props.showGlobalMessage(false, true, 'Data copied from x:server', 'custom-success');
+        setTimeout(()=> {
+            this.props.hideGlobalMessage();
+        }, 2000);
+        this.handleXClientFormValidation();
+    }
+
+       /* istanbul ignore next */
+       copyFromXClientToXServer(){
+        let currentClientForm =  Object.assign({}, this.state.xclientForm);
+        let currentServerForm =  Object.assign({}, this.state.xserverForm);
+
+        currentServerForm.group.value = currentClientForm.group.value;
+        currentServerForm.clientId.value = currentClientForm.clientId.value;
+        currentServerForm.OAuth2.value = currentClientForm.OAuth2.value;
+        currentServerForm.host.value = currentClientForm.host.value;
+
+        this.setState({
+            xserverForm: currentServerForm
+        });
+
+        this.props.showGlobalMessage(false, true, 'Data copied from x:client', 'custom-success');
+        setTimeout(()=> {
+            this.props.hideGlobalMessage();
+        }, 2000);
+        this.handleXServerFormValidation();
+    }
+
      /* istanbul ignore next */
     downloadFile(type){
         this.props.showGlobalMessage(true, true, 'Please wait...', 'custom-success');
@@ -1095,6 +1365,8 @@ export default class Maintainagentcreate extends React.Component {
             prepareData.plg = serverFormData.allowPlugIn.value;
             prepareData.hca = serverFormData.hca.value;
             prepareData.os = serverFormData.os.value;
+            prepareData.parent = '65c77c4f-fdf4-4c6d-a703-48b12cc21b2d';
+            prepareData.name = 'server'
             for(let statePlugIn of this.state.plugIns){
                 if(serverFormData.plugIn.value.indexOf(statePlugIn.id) !== -1){
                     prepareData[statePlugIn.id] = true;
@@ -1104,7 +1376,7 @@ export default class Maintainagentcreate extends React.Component {
                 }
             }
             
-            fetch(this.props.baseUrl + '/generateServerScript', {
+            fetch(this.props.baseUrl + 'generateServerScript', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -1116,7 +1388,8 @@ export default class Maintainagentcreate extends React.Component {
             .then((response) => {
                 if (response.status === 200) {
                     response.json().then((respData) => {
-                        if(respData.errorStatus.status == 'ok'){
+                        /* if(respData.errorStatus.status == 'ok'){ */
+                          sessionStorage.setItem("ServerData",JSON.stringify(prepareData))
                             this.props.hideGlobalMessage();
                             this.props.showModal(modalHeading, respData.data, buttons);
                             setTimeout(()=> {
@@ -1183,13 +1456,13 @@ export default class Maintainagentcreate extends React.Component {
                                     serverFormIsValid: false
                                 });
                             }, 2000);
-                        }
+                       /*  }
                         else{
                             this.props.showGlobalMessage(true, true, respData.errorStatus.statusMsg, 'custom-danger');
                             setTimeout(()=> {
                                 this.props.hideGlobalMessage();
                             }, 2000);
-                        }
+                        } */
                     });
                 }
                 else{
@@ -1207,6 +1480,188 @@ export default class Maintainagentcreate extends React.Component {
                 }, 2000);
             });
         }
+       else if(type === 'x:server'){
+            let serverFormData = Object.assign({}, this.state.xserverForm);
+            prepareData.mod = serverFormData.mode.toLowerCase();
+            prepareData.dbg = agentFormData.debugMode.value;
+            prepareData.ecVersion = agentFormData.ecVersion.value;
+            prepareData.grp = serverFormData.group.value;
+            prepareData.cid = serverFormData.clientId.value;
+            prepareData.oa2 = serverFormData.OAuth2.value;
+            prepareData.hst = serverFormData.host.value;
+            prepareData.cps = 0;
+            prepareData.rht = serverFormData.remoteHost.value;
+            prepareData.parent = '65c77c4f-fdf4-4c6d-a703-48b12cc21b2d';
+            prepareData.name = 'server'
+        
+            fetch(this.props.baseUrl + 'generateServerScript', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': this.props.authToken
+                },
+                body: JSON.stringify(prepareData)
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((respData) => {
+                        /* if(respData.errorStatus.status == 'ok'){ */
+                          sessionStorage.setItem("ServerData",JSON.stringify(prepareData))
+                            this.props.hideGlobalMessage();
+                            this.props.showModal(modalHeading, respData.data, buttons);
+                            setTimeout(()=> {
+                             
+                                if(this.state.gateways.length > 0){
+                                    selectedHost = this.state.gateways[0].id;
+                                }
+                                let serverForm = {
+                                    mode: 'X:SERVER',
+                                    group: { value: serverFormData.group.value, dirtyState: false },
+                                    clientId: { value: serverFormData.clientId.value, dirtyState: false },
+                                    OAuth2:{ value: serverFormData.OAuth2.value, dirtyState: false },
+                                    host: { value: selectedHost, dirtyState: false },
+                                    remoteHost: { value: '', dirtyState: false },
+                                };
+                                
+                                let filename = "x:server.yml";
+                                let data='';
+                                if(agentFormData.ecVersion.value == 'v1.hokkaido.212'){
+                                    data = "ec-config:\n  conf:\n    mod: "+serverFormData.mode.toLowerCase()+ "\n    grp: "+ serverFormData.group.value +"\n  hst: "+ serverFormData.host.value +"\n    dbg: "+ agentFormData.debugMode.value+"\n    cid: "+ serverFormData.clientId.value+"\n   oa2: "+ serverFormData.OAuth2.value+"\n   rht: "+ serverFormData.remoteHost.value + '"' 
+                                }
+                                else{
+                                    data = "ec-config:\n  conf:\n    mod: "+serverFormData.mode.toLowerCase()+ "\n    grp: "+ serverFormData.group.value +"\n    hst: "+ serverFormData.host.value +"\n    dbg: "+ agentFormData.debugMode.value+"\n    cid: "+ serverFormData.clientId.value+"\n    oa2: "+ serverFormData.OAuth2.value+"\n  rht: "+ serverFormData.remoteHost.value +'"';
+                                }
+
+        
+
+                                let blob = new Blob([data], { type: 'text/yml' });
+                                if (window.navigator.msSaveOrOpenBlob) {
+                                    window.navigator.msSaveBlob(blob, filename);
+                                }
+                                else {
+                                    let elem = window.document.createElement('a');
+                                    elem.href = window.URL.createObjectURL(blob);
+                                    elem.download = filename;
+                                    document.body.appendChild(elem);
+                                    elem.click();
+                                    document.body.removeChild(elem);
+                                }
+
+                                this.setState({
+                                    xserverForm: serverForm,
+                                    xserverFormIsValid: false
+                                });
+                            }, 2000);
+                    });
+                }
+                else{
+                    this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                    setTimeout(()=> {
+                        this.props.hideGlobalMessage();
+                    }, 2000);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                setTimeout(()=> {
+                    this.props.hideGlobalMessage();
+                }, 2000);
+            });
+        }
+
+        else if(type === 'x:client'){
+            let xClientFormData = Object.assign({}, this.state.xclientForm);
+            prepareData.mod = xClientFormData.mode.toLowerCase();
+            prepareData.dbg = agentFormData.debugMode.value;
+            prepareData.ecVersion = agentFormData.ecVersion.value;
+            prepareData.grp = xClientFormData.group.value;
+            prepareData.cid = xClientFormData.clientId.value;
+            prepareData.oa2 = xClientFormData.OAuth2.value;
+            prepareData.hst = xClientFormData.host.value;
+            prepareData.cps = 0;
+            prepareData.rht = xClientFormData.remoteHost.value;
+            prepareData.parent = '65c77c4f-fdf4-4c6d-a703-48b12cc21b2d';
+            prepareData.name = 'server'
+        
+            fetch(this.props.baseUrl + 'generateServerScript', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': this.props.authToken
+                },
+                body: JSON.stringify(prepareData)
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then((respData) => {
+                        /* if(respData.errorStatus.status == 'ok'){ */
+                          sessionStorage.setItem("ServerData",JSON.stringify(prepareData))
+                            this.props.hideGlobalMessage();
+                            this.props.showModal(modalHeading, respData.data, buttons);
+                            setTimeout(()=> {
+                             
+                                if(this.state.gateways.length > 0){
+                                    selectedHost = this.state.gateways[0].id;
+                                }
+                                let XClientForm = {
+                                    mode: 'X:CLIENT',
+                                    group: { value: xClientFormData.group.value, dirtyState: false },
+                                    clientId: { value: xClientFormData.clientId.value, dirtyState: false },
+                                    OAuth2:{ value: xClientFormData.OAuth2.value, dirtyState: false },
+                                    host: { value: selectedHost, dirtyState: false },
+                                    remoteHost: { value: '', dirtyState: false },
+                                };
+                                
+                                let filename = "x:client.yml";
+                                let data='';
+                                if(agentFormData.ecVersion.value == 'v1.hokkaido.212'){
+                                    data = "ec-config:\n  conf:\n    mod: "+xClientFormData.mode.toLowerCase()+ "\n    grp: "+xClientFormData.group.value +"\n  hst: "+xClientFormData.host.value +"\n    dbg: "+ agentFormData.debugMode.value+"\n    cid: "+xClientFormData.clientId.value+"\n   oa2: "+xClientFormData.OAuth2.value+"\n   rht: "+xClientFormData.remoteHost.value + '"' 
+                                }
+                                else{
+                                    data = "ec-config:\n  conf:\n    mod: "+xClientFormData.mode.toLowerCase()+ "\n    grp: "+xClientFormData.group.value +"\n    hst: "+xClientFormData.host.value +"\n    dbg: "+ agentFormData.debugMode.value+"\n    cid: "+xClientFormData.clientId.value+"\n    oa2: "+xClientFormData.OAuth2.value+"\n  rht: "+xClientFormData.remoteHost.value +'"';
+                                }
+
+        
+
+                                let blob = new Blob([data], { type: 'text/yml' });
+                                if (window.navigator.msSaveOrOpenBlob) {
+                                    window.navigator.msSaveBlob(blob, filename);
+                                }
+                                else {
+                                    let elem = window.document.createElement('a');
+                                    elem.href = window.URL.createObjectURL(blob);
+                                    elem.download = filename;
+                                    document.body.appendChild(elem);
+                                    elem.click();
+                                    document.body.removeChild(elem);
+                                }
+
+                                this.setState({
+                                    xClientFormData: XClientForm,
+                                    xclientFormIsValid: false
+                                });
+                            }, 2000);
+                    });
+                }
+                else{
+                    this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                    setTimeout(()=> {
+                        this.props.hideGlobalMessage();
+                    }, 2000);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
+                setTimeout(()=> {
+                    this.props.hideGlobalMessage();
+                }, 2000);
+            });
+        }
+
         else if(type === 'client'){
             let clientFormData = this.state.clientForm;
             prepareData.mod = clientFormData.mode.toLowerCase();
@@ -1227,6 +1682,8 @@ export default class Maintainagentcreate extends React.Component {
             prepareData.plg = clientFormData.allowPlugIn.value;
             prepareData.hca = clientFormData.hca.value;
             prepareData.os = clientFormData.os.value;
+            prepareData.parent = '65c77c4f-fdf4-4c6d-a703-48b12cc21b2d';
+            prepareData.name = 'client'
             for(let statePlugIn of this.state.plugIns){
                 if(clientFormData.plugIn.value.indexOf(statePlugIn.id) !== -1){
                     prepareData[statePlugIn.id] = true;
@@ -1236,7 +1693,7 @@ export default class Maintainagentcreate extends React.Component {
                 }
             }
 
-            fetch(this.props.baseUrl + '/generateClientScript', {
+            fetch(this.props.baseUrl + 'generateClientScript', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -1248,8 +1705,9 @@ export default class Maintainagentcreate extends React.Component {
             .then((response) => {
                 if (response.status === 200) {
                     response.json().then((respData) => {
-                        if(respData.errorStatus.status == 'ok'){
+                       /*  if(respData.errorStatus.status == 'ok'){ */
                             this.props.hideGlobalMessage();
+                            sessionStorage.setItem("ClientData",JSON.stringify(prepareData))
                             this.props.showModal(modalHeading, respData.data, buttons);
                             setTimeout(()=> {
                                 let selectedOs = '';
@@ -1313,15 +1771,16 @@ export default class Maintainagentcreate extends React.Component {
                                     clientFormIsValid: false
                                 });
                             }, 2000);
-                        }
+                      /*   }
                         else{
                             this.props.showGlobalMessage(true, true, respData.errorStatus.statusMsg, 'custom-danger');
                             setTimeout(()=> {
                                 this.props.hideGlobalMessage();
                             }, 2000);
-                        }
+                        } */
                     });
                 }
+                
                 else{
                     this.props.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
                     setTimeout(()=> {
@@ -1391,8 +1850,8 @@ export default class Maintainagentcreate extends React.Component {
                             </div>
                             <hr></hr>
                             <div className="row form-body">
-                                <div className="col-sm-3">
-                                    <h6>AGENT MODE</h6>
+                                <div className="col-sm-4">
+                                    <h6>Agent Mode</h6>
                                         <div className="col-sm-12 mb-2">
                                             {this.state.agentModeButtons.map((agentModeButton, buttonIndex) => {
                                                 return(
@@ -1407,7 +1866,7 @@ export default class Maintainagentcreate extends React.Component {
                                             })}
                                         </div>
                                 </div>
-                                <div className="col-sm-3">
+                                <div className="col-sm-2">
                                     <h6>&nbsp;</h6>
                                     <div className="custom-control custom-checkbox">
                                         <input 
@@ -1427,7 +1886,7 @@ export default class Maintainagentcreate extends React.Component {
                                             return(
                                                 <option
                                                     key={"subscriptionOption"+subscriptionIndex}
-                                                    value={ subscription.subscriptionId }>{ subscription.subscriptionName }</option>)
+                                                    value={ subscription.licenseId }>{ subscription.licenseId }</option>)
                                         })}
                                     </select>
                                 </div>
@@ -1449,7 +1908,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                MODE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1462,7 +1921,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                GROUP <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="group" value={this.state.serverForm.group.value} onChange={(event)=>{this.handleServerFormData(event)}}>
@@ -1478,7 +1937,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                AGENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.serverForm.agentId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'agentId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'agentId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
+                                                Agent ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.serverForm.agentId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'agentId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'agentId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1493,7 +1952,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1511,7 +1970,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT SECRET <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.serverForm.clientSecret.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'clientSecret')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'clientSecret')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
+                                                Client Secret <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.serverForm.clientSecret.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'clientSecret')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'serverForm', 'clientSecret')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1526,7 +1985,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                DURATION <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Duration <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1557,7 +2016,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="host" value={this.state.serverForm.host.value} onChange={(event)=>{this.handleServerFormData(event)}}>
@@ -1576,7 +2035,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                ZONE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Zone <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1591,7 +2050,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                SERVICE URL <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Service URL <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1605,7 +2064,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                REMOTE HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Remote Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1620,7 +2079,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                REMOTE PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            Remote Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1639,7 +2098,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HEALTH PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Health Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1655,7 +2114,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                OPERATING SYSTEM <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Operating System  <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="os" value={this.state.serverForm.os.value} onChange={(event)=>{this.handleServerFormData(event)}}>
@@ -1670,7 +2129,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                PROXY
+                                                Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1684,7 +2143,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                NO PROXY
+                                                No Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1701,7 +2160,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                ALLOW PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Allow Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <div className="custom-control custom-checkbox">
@@ -1720,7 +2179,7 @@ export default class Maintainagentcreate extends React.Component {
                                             this.state.serverForm.allowPlugIn.value ? 
                                             <div className="col-sm-3">
                                                 <div className="col-sm-12 label">
-                                                    PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                                 </div>
                                                 <div className="col-sm-12 mb-2">
                                                     <select multiple className="form-control form-control-sm" style={{height:'45px'}} name="plugIn" value={this.state.serverForm.plugIn.value} onChange={(event)=>{this.handleServerFormData(event)}}>
@@ -1765,7 +2224,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                MODE <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1778,7 +2237,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                GROUP <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="group" value={this.state.clientForm.group.value} onChange={(event)=>{this.handleClientFormData(event)}}>
@@ -1794,7 +2253,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                AGENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.agentId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'agentId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'agentId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
+                                                Agent ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.agentId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'agentId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'agentId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1809,7 +2268,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1827,7 +2286,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                CLIENT SECRET <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.clientSecret.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'clientSecret')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'clientSecret')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
+                                            Client Secret <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.clientSecret.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'clientSecret')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'clientSecret')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1842,7 +2301,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                DURATION <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Duration <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1873,7 +2332,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HOST <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="host" value={this.state.clientForm.host.value} onChange={(event)=>{this.handleClientFormData(event)}}>
@@ -1892,7 +2351,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                LOCAL PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Local Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1908,7 +2367,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                TARGET ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.targetId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'targetId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'targetId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
+                                                Target ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" /> { this.state.clientForm.targetId.type == 'password' ? <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'targetId')}} className="fa fa-eye cursor-pointer" title="Show"></i> : <i onClick={(event)=>{this.showHideField(event, 'clientForm', 'targetId')}} className="fa fa-eye-slash cursor-pointer" title="Hide"></i> }
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1923,7 +2382,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                PROXY
+                                            Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1937,7 +2396,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                NO PROXY
+                                                No Proxy
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1954,7 +2413,7 @@ export default class Maintainagentcreate extends React.Component {
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                HEALTH PORT <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Health Port <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <input
@@ -1970,7 +2429,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                OPERATING SYSTEM <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Operating System <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                             </div>
                                             <div className="col-sm-12 mb-2">
                                                 <select className="form-control form-control-sm" name="os" value={this.state.clientForm.os.value} onChange={(event)=>{this.handleClientFormData(event)}}>
@@ -1985,7 +2444,7 @@ export default class Maintainagentcreate extends React.Component {
                                         </div>
                                         <div className="col-sm-3">
                                             <div className="col-sm-12 label required">
-                                                    ALLOW PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                    Allow Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                                 </div>
                                                 <div className="col-sm-12 mb-2">
                                                     <div className="custom-control custom-checkbox">
@@ -2004,7 +2463,7 @@ export default class Maintainagentcreate extends React.Component {
                                             this.state.clientForm.allowPlugIn.value ? 
                                             <div className="col-sm-3">
                                                 <div className="col-sm-12 label">
-                                                    PLUG-IN <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                                Plug-in <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
                                                 </div>
                                                 <div className="col-sm-12 mb-2">
                                                     <select multiple className="form-control form-control-sm" style={{height:'45px'}} name="plugIn" value={this.state.clientForm.plugIn.value} onChange={(event)=>{this.handleClientFormData(event)}}>
@@ -2041,6 +2500,244 @@ export default class Maintainagentcreate extends React.Component {
                                 </div>
                                 : null
                             }
+
+                        {this.state.agentForm.agentMode.value == 4 ?
+                                <div className="changeable-form x-server-form">
+                                    <div className="row">
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <input
+                                                    type="text"
+                                                    className="form-control form-control-sm"
+                                                    name="mode"
+                                                    disabled={true}
+                                                    defaultValue={this.state.xserverForm.mode} />
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <select className="form-control form-control-sm" name="group" value={this.state.xserverForm.group.value} onChange={(event)=>{this.handleXServerFormData(event)}}>
+                                                    {this.state.groups.map((group, groupIndex) => {
+                                                        return(
+                                                            <option
+                                                                key={"groupOption"+groupIndex}
+                                                                value={ group.groupId }>{ group.groupId }</option>)
+                                                    })}
+                                                </select>
+                                                <small className="text-danger">{ this.state.errorsXServerForm['group']}</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <input
+                                                    type="text"
+                                                    autoComplete="off"
+                                                    className="form-control form-control-sm"
+                                                    name="clientId"
+                                                    value={this.state.xserverForm.clientId.value}
+                                                    onChange={(event)=>{this.handleXServerFormData(event)}} />
+                                                <small className="text-danger">{ this.state.errorsXServerForm['clientId']}</small>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <div className="row">
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                OAUTH2 <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <input
+                                                    type="text"
+                                                    autoComplete="off"
+                                                    className="form-control form-control-sm"
+                                                    name="OAuth2"
+                                                    value={this.state.xserverForm.OAuth2.value}
+                                                    onChange={(event)=>{this.handleXServerFormData(event)}} />
+                                                <small className="text-danger">{ this.state.errorsXServerForm['OAuth2']}</small>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <select className="form-control form-control-sm" name="host" value={this.state.xserverForm.host.value} onChange={(event)=>{this.handleXServerFormData(event)}}>
+                                                    {this.state.gateways.map((gateway, gatewayIndex) => {
+                                                        return(
+                                                            <option
+                                                                key={"gatewayOption"+gatewayIndex}
+                                                                value={ gateway.id }>{ gateway.name }</option>)
+                                                    })}
+                                                </select>
+                                                <small className="text-danger">{ this.state.errorsXServerForm['host']}</small>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Remote Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <input
+                                                    type="text"
+                                                    autoComplete="off"
+                                                    className="form-control form-control-sm"
+                                                    name="remoteHost"
+                                                    value={this.state.xserverForm.remoteHost.value}
+                                                    onChange={(event)=>{this.handleXServerFormData(event)}} />
+                                                <small className="text-danger">{ this.state.errorsXServerForm['remoteHost']}</small>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <div className="col-sm-12 mb-2"><hr></hr></div>
+                                    
+                                    <div className="row">
+                                        <div className="col-sm-5 mb-2">
+                                            <img alt="copy" src="assets/static/images/copy.svg" height="15px" />
+                                            <a onClick={this.copyFromXClientToXServer.bind(this)} href="#" className="theme-color cursor-pointer ml-1"><small>Copy details from x:client</small></a>
+                                        </div>
+                                        <div className="col-sm-7 mb-2">
+                                            <button
+                                                id="create-client-btn"
+                                                disabled = {!this.state.xserverFormIsValid} 
+                                                onClick={this.downloadFile.bind(this, 'x:server')} 
+                                                className="btn btn-sm customize-view-btn">CREATE SCRIPT</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                : null
+                            }
+
+                            {this.state.agentForm.agentMode.value == 5 ?
+                                <div className="changeable-form x-client-form">
+                                <div className="row">
+                                    <div className="col-sm-4">
+                                        <div className="col-sm-12 label required">
+                                            Mode <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                        </div>
+                                        <div className="col-sm-12 mb-2">
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-sm"
+                                                name="mode"
+                                                disabled={true}
+                                                defaultValue={this.state.xclientForm.mode} />
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-4">
+                                        <div className="col-sm-12 label required">
+                                            Group <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                        </div>
+                                        <div className="col-sm-12 mb-2">
+                                            <select className="form-control form-control-sm" name="group" value={this.state.xclientForm.group.value} onChange={(event)=>{this.handleXClientFormData(event)}}>
+                                                {this.state.groups.map((group, groupIndex) => {
+                                                    return(
+                                                        <option
+                                                            key={"groupOption"+groupIndex}
+                                                            value={ group.groupId }>{ group.groupId }</option>)
+                                                })}
+                                            </select>
+                                            <small className="text-danger">{ this.state.errorsXClientForm['group']}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="col-sm-4">
+                                        <div className="col-sm-12 label required">
+                                            Client ID <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                        </div>
+                                        <div className="col-sm-12 mb-2">
+                                            <input
+                                                type="text"
+                                                autoComplete="off"
+                                                className="form-control form-control-sm"
+                                                name="clientId"
+                                                value={this.state.xclientForm.clientId.value}
+                                                onChange={(event)=>{this.handleXClientFormData(event)}} />
+                                            <small className="text-danger">{ this.state.errorsXClientForm['clientId']}</small>
+                                        </div>
+                                    </div>
+                                </div> 
+
+                                <div className="row">
+                                    <div className="col-sm-4">
+                                        <div className="col-sm-12 label required">
+                                            OAUTH2 <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                        </div>
+                                        <div className="col-sm-12 mb-2">
+                                            <input
+                                                type="text"
+                                                autoComplete="off"
+                                                className="form-control form-control-sm"
+                                                name="OAuth2"
+                                                value={this.state.xclientForm.OAuth2.value}
+                                                onChange={(event)=>{this.handleXClientFormData(event)}} />
+                                            <small className="text-danger">{ this.state.errorsXClientForm['OAuth2']}</small>
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-4">
+                                        <div className="col-sm-12 label required">
+                                            Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                        </div>
+                                        <div className="col-sm-12 mb-2">
+                                            <select className="form-control form-control-sm" name="host" value={this.state.xclientForm.host.value} onChange={(event)=>{this.handleXClientFormData(event)}}>
+                                                {this.state.gateways.map((gateway, gatewayIndex) => {
+                                                    return(
+                                                        <option
+                                                            key={"gatewayOption"+gatewayIndex}
+                                                            value={ gateway.id }>{ gateway.name }</option>)
+                                                })}
+                                            </select>
+                                            <small className="text-danger">{ this.state.errorsXClientForm['host']}</small>
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-4">
+                                            <div className="col-sm-12 label required">
+                                                Remote Host <img alt="down-arrow" src="assets/static/images/icon_greensortingdown.svg" />
+                                            </div>
+                                            <div className="col-sm-12 mb-2">
+                                                <input
+                                                    type="text"
+                                                    autoComplete="off"
+                                                    className="form-control form-control-sm"
+                                                    name="remoteHost"
+                                                    value={this.state.xclientForm.remoteHost.value}
+                                                    onChange={(event)=>{this.handleXClientFormData(event)}} />
+                                                <small className="text-danger">{ this.state.errorsXClientForm['remoteHost']}</small>
+                                            </div>
+                                        </div>
+                                </div> 
+
+                                <div className="col-sm-12 mb-2"><hr></hr></div>
+                                
+                                <div className="row">
+                                    <div className="col-sm-5 mb-2">
+                                        <img alt="copy" src="assets/static/images/copy.svg" height="15px" />
+                                        <a onClick={this.copyFromXServerToXClient.bind(this)} href="#" className="theme-color cursor-pointer ml-1"><small>Copy details from x:server</small></a>
+                                    </div>
+                                    <div className="col-sm-7 mb-2">
+                                        <button
+                                            id="create-client-btn"
+                                            disabled = {!this.state.xclientFormIsValid} 
+                                            onClick={this.downloadFile.bind(this, 'x:client')} 
+                                            className="btn btn-sm customize-view-btn">CREATE SCRIPT</button>
+                                    </div>
+                                </div>
+                            </div>
+                                : null
+                            }
+
+
                         </div>
                     </div>
                 </div>

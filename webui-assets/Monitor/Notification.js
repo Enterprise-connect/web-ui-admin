@@ -2,106 +2,76 @@ import React from "react";
 
 const MOCK_TABLE_DATA = [
     {
-        agent_id: 'DEV63016760',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename1',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016760',
-        client_pool: '63016760',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename',
+        event_type: 'Client Agent Restart',
+        gateway: '0d0c3ef5-c8c1-49e3-a9f0-2b2bf22f6fca',
+        desc: 'The Client is in active state',
+        time: '2021-05-22T10:17',
+        components: 'Gateway, Clients',
     },
     {
-        agent_id: 'DEV63016761',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename11',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016761',
-        client_pool: '63016761',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Gateway Agent Restart',
+        gateway: '3824402a-2504-4239-9820-8ae26caef99a',
+        desc: 'The Gateway is in suspended state',
+        time: '2021-06-15T15:17',
+        components: 'Group 1',
     },
     {
-        agent_id: 'DEV63016762',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016762',
-        client_pool: '63016762',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Server Agent Restart',
+        gateway: '664b3ec3-ad7d-476d-a137-66071854e7cc',
+        desc: 'The Server is in loading state',
+        time: '2021-06-02T05:12',
+        components: 'Gateway , Server',
     },
     {
-        agent_id: 'DEV63016763',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 2',
-        connections_no: 'Group 2',
-        group: 'Group 3',
-        id: '63016763',
-        client_pool: '63016763',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Client Agent Restart',
+        gateway: '7733df8b-96c1-427b-8568-09526e4b9b51',
+        desc: 'The Client is in suspended state',
+        time: '2021-06-12T11:17',
+        components: 'Gateway',
     },
     {
-        agent_id: 'DEV63016764',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 2',
-        connections_no: 'Group 2',
-        group: 'Group 2',
-        id: '63016762',
-        client_pool: '63016762',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Client Agent Restart',
+        gateway: 'b7f5eb88-fef0-44f3-92b3-ea450211eb1e',
+        desc: 'The Client is in pending state',
+        time: '2021-05-21T11:27',
+        components: ' Clients',
     },
     {
-        agent_id: 'DEV63016765',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 3',
-        connections_no: 'Group 3',
-        group: 'Group 3',
-        id: '63016765',
-        client_pool: '63016765',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Connection Establish',
+        gateway: '7733df8b-96c1-427b-8568-09526e4b9b51',
+        desc: 'The connection established between Gateway and server',
+        time: '2021-06-05T14:18',
+        components: 'Gateway, Server',
     },
     {
-        agent_id: 'DEV63016766',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016766',
-        client_pool: '63016766',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Client Agent Restart',
+        gateway: 'c810a15e-2892-4276-873a-f0b3f4603d42',
+        desc: 'The Client is suspended state',
+        time: '2021-05-28T10:32',
+        components: 'Gateway, Clients',
     },
     {
-        agent_id: 'DEV63016767',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016767',
-        client_pool: '63016767',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Server Agent Restart',
+        gateway: '7733df8b-96c1-427b-8568-09526e4b9b51',
+        desc: 'The Server is in suspended state',
+        time: '2021-05-15T12:27',
+        components: ' Server',
     },
     {
-        agent_id: 'DEV63016768',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016768',
-        client_pool: '63016768',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Gateway Agent Restart',
+        gateway: 'c810a15e-2892-4276-873a-f0b3f4603d42',
+        desc: 'The Gateway is in active state',
+        time: '2021-04-20T12:10',
+        components: 'Gateway, Clients , Server',
     },
     {
-        agent_id: 'DEV63016769',
-        gateway: 'https://avipocsubdomain.domainname.ext/pagename',
-        session: 'Group 1',
-        connections_no: 'Group 1',
-        group: 'Group 1',
-        id: '63016769',
-        client_pool: '63016769',
-        subscription: 'https://avipocsubdomain.domainname.ext/pagename'
+        event_type: 'Connection Establish',
+        gateway: 'b7f5eb88-fef0-44f3-92b3-ea450211eb1e',
+        desc: 'The connection established between gateway and client',
+        time: '2021-03-12T20:17',
+        components: 'Gateway, Clients',
     },
-    {
+   /*  {
         agent_id: 'DEV63016770',
         gateway: 'https://avipocsubdomain.domainname.ext/pagename',
         session: 'Group 1',
@@ -140,7 +110,7 @@ const MOCK_TABLE_DATA = [
         id: '63016773',
         client_pool: '63016773',
         subscription: 'https://avipocsubdomain.domainname.ext/pagename'
-    }
+    } */
 ];
 
 export default class Notification extends React.Component {
@@ -183,18 +153,15 @@ export default class Notification extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="centered-div">
+                    <div className="centered-div" id="notificationTableDiv">
                         <table id="notificationTable" className="table">
                             <thead>
                                 <tr>
-                                    <th>Agent ID</th>
+                                    <th>Event Type</th>
                                     <th>Gateway</th>
-                                    <th>Session</th>
-                                    <th>Connections No.</th>
-                                    <th>Group ID</th>
-                                    <th>ID</th>
-                                    <th>Client Pool</th>
-                                    <th>Subscription</th>
+                                    <th>Description</th>
+                                    <th>Time Stamp</th>
+                                    <th>Components Associated</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -202,7 +169,7 @@ export default class Notification extends React.Component {
                             {this.state.newTableData.map((tbodyVal, tbodyIndex) => {
                                 return(
                                     <tr key={'notificationTableTbodyTr_'+tbodyIndex}>
-                                        <td>{ tbodyVal.agent_id }</td>
+                                        <td>{ tbodyVal.event_type }</td>
                                         <td>
                                             { tbodyVal.gateway }&nbsp;&nbsp;
                                             {
@@ -211,18 +178,9 @@ export default class Notification extends React.Component {
                                                     null
                                             }
                                         </td>
-                                        <td>{ tbodyVal.session }</td>
-                                        <td>{ tbodyVal.connections_no }</td>
-                                        <td>{ tbodyVal.group }</td>
-                                        <td>{ tbodyVal.id }</td>
-                                        <td>{ tbodyVal.client_pool }</td>
-                                        <td>
-                                            { tbodyVal.subscription }&nbsp;&nbsp;
-                                            {  tbodyVal.subscriptionHiddenFlag ?
-                                                <img onClick={this.showHideTableTdData.bind(this, tbodyIndex, 'subscription')} className="icon-arrowmore" alt="td-detail" src="assets/static/images/icon_arrowmore.svg" />:
-                                                null
-                                            }
-                                        </td>
+                                        <td>{ tbodyVal.desc }</td>
+                                        <td>{ tbodyVal.time }</td>
+                                        <td>{ tbodyVal.components }</td>
                                         <td>
                                             <span className="action-img">
                                                 <img alt="plus-icon" title="" src="assets/static/images/plus.svg" />

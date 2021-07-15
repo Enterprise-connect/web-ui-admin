@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
 import Dashboard from './Dashboard/Dashboard.js';
 import View from './View/View.js';
 import Maintain from './Maintain/Maintain.js';
@@ -21,6 +22,7 @@ import Monitor from './Monitor/Monitor.js';
 import Notification from './Monitor/Notification.js';
 import Alert from './Monitor/Alert.js';
 import Healthstatus from './Monitor/Healthstatus.js';
+
 import Report from './Report/Report.js';
 import UserManagement from './Settings/UserManagement.js';
 import UserProfile from "./Settings/UserProfile.js";
@@ -30,11 +32,12 @@ import Header from './Header/Header.js';
 import Support from './Support/Support.js';
 import Cookienotification from './Cookienotification/Cookienotification.js';
 import FloaterHelp from "./FloaterHelp/FloaterHelp.js";
+import Footer from "./Footer/Footer.js";
 
 import * as helpTextFile from './static/helpText/helpText.js';
 const HELPTEXT = helpTextFile.default;
-
-var API_URL = '/v1.2beta/ops/api/';
+const API_URL = '/v1.2beta/ops/api/';
+const USER_API = 'https://ec-oauth-sso.run.aws-usw02-dev.ice.predix.io/'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -77,28 +80,121 @@ export default class App extends React.Component {
     this.setState({
       authToken: authToken
     });
-	  
-	 /*    fetch( "https://ec-portal-1x.run.aws-usw02-dev.ice.predix.io/v1.2beta/ops/oauth/user",{ //this.state.apiEndPoints.baseUrl + "oauth/user", {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization':"Bearer " + authToken
-            }
-          })
-          .then((respons) => {
-              if (respons.status === 200) {
-                respons.json().then((resp) => {console.log(resp)})
-              }})*/
-	  
+
 	    this.showGlobalMessage(
       true,
       true,
       "Please wait...",
       "custom-success"
     );
+	  
+	fetch(USER_API + 'introspect', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization':"Bearer " + authToken
+        }
+      }).then((response)=>{
+        if (response.status === 200) {
+            response.json().then((respData) => { console.log( 'tokendata '+ respData )}) }
+      }) 
+
+    let permission = {
+      "roleId": 1,
+      "roleName": "Admin",
+      "accesses": {
+        "dashboard": {
+          "haveAccess": true
+        },
+        "view": {
+          "haveAccess": true
+        },
+        "maintain": {
+            "haveAccess": true,
+            "subMenus":{
+                "subscriptions": {
+                    "create": true,
+                    "view": true,
+                    "edit": true,
+                    "delete": true
+                },
+                "groups": {
+                    "create": true,
+                    "view": true,
+                    "edit": true,
+                    "delete": true
+                },
+                "agents": {
+                    "create": true,
+                    "view": true,
+                    "edit": true,
+                    "delete": true
+                },
+                "watchers": {
+                    "create": true,
+                    "view": true,
+                    "edit": true,
+                    "delete": true
+                }
+            }
+        },
+        "monitor": {
+          "haveAccess": true,
+          "subMenus":{
+            "notifications": {
+                "view": true,
+                "edit": true,
+                "delete": true
+            },
+            "alerts": {
+                "view": true,
+                "edit": true,
+                "delete": true
+            },
+            "healthStatus": {
+                "view": true,
+                "edit": true,
+                "delete": true,
+                "isUser": true,
+                }
+              }
+            },
+            "reports": {
+              "haveAccess": true
+            },
+            "settings": {
+              "haveAccess": true
+            },
+            "support": {
+              "haveAccess": true
+            },
+          }
+        };
 
     // Get logged user's userId start
+    let snapshotData =  sessionStorage.getItem("snapshotData")
+    if (snapshotData !== null){
+      let jsonData = JSON.parse(snapshotData)
+      let data = jsonData["ab2a2691-a563-486c-9883-5111ff36ba9b"]
+      console.log('optimized Data')
+      this.hideGlobalMessage();
+       let userId = data.user_id;
+       let profileName = data.username;
+       let profileEmailId = data.email;
+       let permissions = permission; 
+       this.setState({
+         profileData: {
+           email: profileEmailId,
+           name: profileName
+         },
+         userId: userId,
+         permissions: permissions,
+         currentView: 'Dashboard'
+       });
+    }
+
+    else{
    let apiEndPoint= this.state.apiEndPoints.baseUrl + 'snapshot'    //"https://reqres.in/api/users/2"  //baseUrl -this.state.apiEndPoints.baseUrl + '/snapshot'
     fetch(apiEndPoint, {
       method: 'GET',
@@ -113,78 +209,7 @@ export default class App extends React.Component {
           response.json().then((respData) => {
             let data = respData["ab2a2691-a563-486c-9883-5111ff36ba9b"]
 	          sessionStorage.setItem("snapshotData", JSON.stringify(respData))
-	
-            let permission = {
-                "roleId": 1,
-                "roleName": "Admin",
-                "accesses": {
-                  "dashboard": {
-                    "haveAccess": true
-                  },
-                  "view": {
-                    "haveAccess": true
-                  },
-                  "maintain": {
-                      "haveAccess": true,
-                      "subMenus":{
-                          "subscriptions": {
-                              "create": true,
-                              "view": true,
-                              "edit": true,
-                              "delete": true
-                          },
-                          "groups": {
-                              "create": true,
-                              "view": true,
-                              "edit": true,
-                              "delete": true
-                          },
-                          "agents": {
-                              "create": true,
-                              "view": true,
-                              "edit": true,
-                              "delete": true
-                          },
-                          "watchers": {
-                              "create": true,
-                              "view": true,
-                              "edit": true,
-                              "delete": true
-                          }
-                      }
-                  },
-                  "monitor": {
-                    "haveAccess": true,
-                    "subMenus":{
-                      "notifications": {
-                          "view": true,
-                          "edit": true,
-                          "delete": true
-                      },
-                      "alerts": {
-                          "view": true,
-                          "edit": true,
-                          "delete": true
-                      },
-                      "healthStatus": {
-                          "view": true,
-                          "edit": true,
-                          "delete": true,
-			  "isUser": true,
-                      }
-                    }
-                  },
-                  "reports": {
-                    "haveAccess": true
-                  },
-                  "settings": {
-                    "haveAccess": true
-                  },
-                  "support": {
-                    "haveAccess": true
-                  },
-                }
-              };
+           
  	      this.hideGlobalMessage();
               let userId = data.user_id;
               let profileName = data.username;
@@ -199,13 +224,6 @@ export default class App extends React.Component {
                 permissions: permissions,
                 currentView: 'Dashboard'
               });
-            /* }
-            else{
-              this.showGlobalMessage(true, true, 'Please try after sometime', 'custom-danger');
-              setTimeout(function () {
-                location.reload(true);
-              }, 2000);
-            } */
           });
         }
         else {
@@ -214,48 +232,8 @@ export default class App extends React.Component {
             location.reload(true);
           }, 2000);
         }
-    });
+    });}
     // Get logged user's userId end
-
-    setTimeout(()=>{
-      this.updateEcLocalStorage();
-    },60000); // 5 mins
-  }
-
-  /* istanbul ignore next */
-  updateEcLocalStorage(){
-    this.timer = setInterval(()=> this.refreshSnapshot(), 300000); // 5 mins
-  }
-
-  /* istanbul ignore next */
-  componentWillUnmount() {
-     clearInterval(this.timer);
-    this.timer = null;
-  }
-
-  /* istanbul ignore next */
-   refreshSnapshot(){ 
-    fetch(this.state.apiEndPoints.baseUrl + 'snapshot' , {
-      method: 'GET',
-      headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer " + this.state.authToken
-      }
-    })
-    .then((response) => {
-        if (response.status === 200) {
-          response.json().then((respData) => {
-           /*    let newToken = respData.data;
-              this.setState({
-                authToken: newToken
-              });
-              let cookieToUpdate = 'ec-config';
-              document.cookie = cookieToUpdate+"="+newToken; */
-              sessionStorage.setItem("snapshotData", JSON.stringify(respData))
-          });
-        }
-    });
   }
 
   /* istanbul ignore next */
@@ -359,13 +337,13 @@ handleUser(user) {
       case 'Healthstatus':
         return <Healthstatus userId={this.state.userId} showGlobalMessage={this.showGlobalMessage.bind(this)} hideGlobalMessage={this.hideGlobalMessage.bind(this)} />; // jshint ignore:line
       case 'Report':
-        return <Report />; // jshint ignore:line
+        return  <Report />; // jshint ignore:line
       case 'Usermanagement':
-        return <UserManagement />; // jshint ignore:line
+        return <UserManagement baseUrl={this.state.apiEndPoints.baseUrl} authToken={this.state.authToken}  userId={this.state.userId} showGlobalMessage={this.showGlobalMessage.bind(this)} hideGlobalMessage={this.hideGlobalMessage.bind(this)}  />; // jshint ignore:line
       case "UserProfile":
-        return <UserProfile />; // jshint ignore:line
+        return <UserProfile baseUrl={this.state.apiEndPoints.baseUrl} authToken={this.state.authToken}  userId={this.state.userId} showGlobalMessage={this.showGlobalMessage.bind(this)} hideGlobalMessage={this.hideGlobalMessage.bind(this)}  />; // jshint ignore:line
       case 'WebHooks':
-        return  <WebHooks userId={this.state.userId} showGlobalMessage={this.showGlobalMessage.bind(this)} hideGlobalMessage={this.hideGlobalMessage.bind(this)} /> // jshint ignore:line
+        return  <WebHooks baseUrl={this.state.apiEndPoints.baseUrl} authToken={this.state.authToken}  userId={this.state.userId} showGlobalMessage={this.showGlobalMessage.bind(this)} hideGlobalMessage={this.hideGlobalMessage.bind(this)} /> // jshint ignore:line
       case 'Support':
         return <Support />; // jshint ignore:line
       default:
@@ -529,8 +507,8 @@ handleUser(user) {
                       { this.servedView() }
                     </div>
                     <Cookienotification />
-		    <FloaterHelp/>
-                    
+		                <FloaterHelp/>
+                    <Footer/>
                     <div className="modal fade logoutWarningModal" id="logoutWarningModal" role="dialog" data-backdrop="static" data-keyboard="false">
                       <div className="modal-dialog modal-sm">
                         <div className="modal-content rounded-0">

@@ -1,3 +1,31 @@
+ if (window.Worker) {
+        var myWorker = new Worker("assets/worker.js");
+        var authToken = this.getToken('ec-config');
+        var message = { api: "/v1.2beta/ops/api/snapshot", authToken: authToken };
+        myWorker.postMessage(message);
+        myWorker.onmessage = function (e) {
+         sessionStorage.setItem("snapshotData", JSON.stringify(e.data.result))
+        };
+      }
+       
+       function getToken(name){
+        var cookieName = name+"=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(cookieName) == 0) {
+              return c.substring(cookieName.length, c.length);
+            }
+      }
+
+    }
+
+
+
 $( document ).ready(function() {
     $('[data-toggle="tooltip"]').tooltip(); // For tooltips
     $.fn.extend({
@@ -62,6 +90,8 @@ $( document ).ready(function() {
     window.onkeypress = ResetTimeOutTimer;
     // Auto logout end
 });
+
+
 
 function loadTree(id){
     $('#'+id).treed();

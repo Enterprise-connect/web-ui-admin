@@ -4,14 +4,18 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
+    
+     <!-- Service Workers -->
+    <script src="assets/static/js/service-worker-comaptibilty.js" defer></script>
+    
+    <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/> 
     <!-- Bootstrap table -->
     <link rel="stylesheet" href="assets/static/css/jquery.dataTables.css">
   
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.31/system.js"></script>
+     <script type="text/javascript" src="assets/static/js/custom.js" defer></script>
     
       <!-- HighChart Library -->
       <script src="assets/static/js/highchart.js" defer></script>
@@ -34,7 +38,7 @@
       
          @font-face {
         font-family: GE Inspira Sans;
-        src: url(GEInspiraSans-Regular-v02.ttf);
+        src: url(assets/fonts/GEInspiraSans-Regular-v02.ttf);
       }
 
       
@@ -63,6 +67,7 @@
       }
 
       body {
+        font-size: large;
         display: -ms-flexbox;
         display: flex;
         -ms-flex-align: center;
@@ -215,9 +220,13 @@
       background-size: 50px;
       }
 
-      header{
-        background-color: #005EB8;
-        border-radius: 1rem 1rem 0rem 0rem;
+
+      .user-header {
+        background-color: #005eb8;
+      }
+
+      .admin-header {
+        background-color: #0d1623;
       }
 
       .ge-logo{
@@ -310,7 +319,7 @@
       }
 
       .Maintainagentupgrade .centered-div, .Maintainagentview .centered-div, .Subscriptionupgrade .centered-div, .Groupupgrade .centered-div{
-        height: 300px;
+        height: 400px;
       }
 
       .centered-div-header .view-header h6, 
@@ -336,6 +345,35 @@
       hr{
         margin-top: 0rem;
       }
+      
+      /*footer start */
+      .copyright {
+        padding: 15px 0;
+        margin-top: 55px;
+        background-color: #0d1623;
+        bottom: 0;
+        position: absolute;
+      }
+      .copyright span,
+      .copyright a {
+        color: #878787;
+        -webkit-transition: all 0.3s linear;
+        -o-transition: all 0.3s linear;
+        transition: all 0.3s linear;
+      }
+      .copyright a:hover {
+        color: #007bff;
+      }
+
+      .copyright-menu ul {
+        margin: 0;
+      }
+
+      .copyright-menu li {
+        display: inline-block;
+        padding-left: 20px;
+      }
+      /*footer ends */
 
       .cursor-pointer{
         cursor: pointer;
@@ -347,7 +385,7 @@
       }
 
       .treeview-div{
-        overflow-y: scroll;
+        overflow-y: auto;
         height: 350px;
         text-align: left;
       }
@@ -428,8 +466,8 @@
 
       .view-table{
         max-height: 350px;
-        overflow-y: scroll;
-        font-size: small;
+        overflow-y: auto;
+        font-size: medium;
       }
 
       .bottom .dataTables_length{
@@ -438,7 +476,7 @@
 
       table.dataTable thead th{
         border-bottom: 1px solid #ebeced;
-        font-weight: 500;
+       /* font-weight: 500; */
         border-top: 0px;
       }
 
@@ -525,7 +563,7 @@
 
       .Maintainagentcreate .form-body h6{
         font-weight: 600;
-        color: #8f9ca9;
+        color: black;
         margin-left: 15px;;
       }
 
@@ -589,9 +627,9 @@
       }*/
 
       .changeable-form .label, .health-label{
-        font-size: .7rem;
+        font-size: medium;
         font-weight: 600;
-        color: #8f9ca9;
+        color: black;
       }
 
       .executeModal .modal-content {
@@ -631,7 +669,7 @@
       .Maintainagentview .centered-div, .Maintainagentupgrade .centered-div, .Notification .centered-div, .Subscriptionupgrade .centered-div, .Groupupgrade .centered-div{
         max-height: 450px;
         overflow-y: auto;
-        font-size: small;
+        font-size: medium;
       }
 
       .Notification .centered-div{
@@ -1104,15 +1142,16 @@
     <link rel="shortcut icon" href="https://www.ge.com/sites/all/themes/ge_2016/favicon.ico" type="image/vnd.microsoft.icon">
   </head>
   <body class="text-center" style="background-color: gray;">
-    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <!-- Note: when deploying, replace "development.js" with "production.min.js".-->
     <script>
       System.config({
         transpiler: 'babel',
         baseURL: '',
         map: {
           babel: 'https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js',
-          react: 'https://unpkg.com/react@16/umd/react.development.js',
-          'react-dom': 'https://unpkg.com/react-dom@16/umd/react-dom.development.js'
+          react: 'https://unpkg.com/react@17/umd/react.development.js',
+          'react-dom': 'https://unpkg.com/react-dom@17/umd/react-dom.development.js',
+          uuid: "https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js"
         },
         babelOptions: {
           compact: true
@@ -1121,7 +1160,7 @@
 
       // loads
       System.import('assets/xcalrWebUI.js');
-    </script>
+    </script> 
     <div id="root">
       <div class="Index container">
         <div class="row">
@@ -1137,7 +1176,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <script type="text/javascript" src="assets/static/js/custom.js"></script>
+   
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>

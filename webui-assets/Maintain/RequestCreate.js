@@ -113,7 +113,7 @@ export default class RequestCreate extends React.Component {
                       onClick={this.createRequest.bind(this)}
                       className="btn btn-sm customize-view-btn"
                     >
-                      CREATE REQUEST
+                      Create Request
                     </button>
                   </div>
                 </div>

@@ -30,13 +30,13 @@ export default class Navbar extends React.Component {
                         }
                         { this.props.permissions.accesses && this.props.permissions.accesses.maintain.haveAccess ?
                             <li id="nav-maintain" className={this.props.currentView === 'Maintain' || this.props.currentView === 'Maintainagentcreate'  || this.props.currentView === 'Maintainagentupgrade' || 
-                            this.props.currentView === 'Maintainagentview' || this.props.currentView === 'RequestCreate'  || this.props.currentView === 'RequestUpgrade' || this.props.currentView === 'RequestView' 
+                            this.props.currentView === 'Maintainagentview' || this.props.currentView === 'Requestcreate'  || this.props.currentView === 'RequestUpgrade' || this.props.currentView === 'RequestView' 
                             || this.props.currentView === 'Subscriptioncreate'  || this.props.currentView === 'Subscriptionview' || this.props.currentView === 'Subscriptionupgrade' || this.props.currentView === 'Groupcreate'
                              || this.props.currentView === 'Groupupgrade' || this.props.currentView === 'GroupView'
                             ? "nav-item dropdown active" : "nav-item dropdown"}>
                                 <a className="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
                                     <img src={'assets/static/images/maintain_icon.svg'} alt="nav-maintain" />
-                                    Maintain 
+                                     Maintain 
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 { this.props.permissions.accesses.maintain.subMenus.subscriptions.view || this.props.permissions.accesses.maintain.subMenus.subscriptions.create || this.props.permissions.accesses.maintain.subMenus.subscriptions.edit || this.props.permissions.accesses.maintain.subMenus.subscriptions.delete ?
@@ -173,15 +173,15 @@ export default class Navbar extends React.Component {
 
                         { this.props.permissions.accesses && this.props.permissions.accesses.monitor.haveAccess ?
                         <li id="nav-monitor" className={this.props.currentView === 'Notification' || this.props.currentView === 'Alert' || this.props.currentView === 'View' ? 'nav-item dropdown active' : 'nav-item dropdown'}>
-                            <a className="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                            <a className="nav-link" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
                                 <img src={'assets/static/images/monitor_icon.svg'} alt="nav-monitor" />
                                 Monitor
                             </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink1">
                                 { this.props.permissions.accesses.monitor.subMenus.notifications.view ?
                                     <li>
                                         <a id="nav-notification" className="dropdown-item" onClick={this.props.clickEve.bind(this, 'Notification')} href="#">
-                                            Alert
+                                            Events
                                         </a>
                                     </li>
                                     :
@@ -222,11 +222,11 @@ export default class Navbar extends React.Component {
                         }
                         { this.props.permissions.accesses && this.props.permissions.accesses.settings.haveAccess ?
                         <li className={this.props.currentView === 'Usermanagement' || this.props.currentView === 'WebHooks' || this.props.currentView === 'UserProfile'  ? 'nav-item dropdown active' : 'nav-item dropdown'}>
-                            <a className="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                            <a className="nav-link" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
                                 <img src={'assets/static/images/settings_icon.svg'} alt="nav-settings" />
                                 Settings
                             </a>
-                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
                                 <li>
                                     <a className="dropdown-item" onClick={this.props.clickEve.bind(this, 'WebHooks')} href="#">
                                        Webhooks
